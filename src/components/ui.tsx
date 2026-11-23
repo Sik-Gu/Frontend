@@ -57,7 +57,7 @@ export function Progress({ value, max }: { value: number; max: number }) {
   return <div className="progress"><span style={{ width: `${pct}%` }} /></div>;
 }
 
-export function Avatar({ name, size = '' }: { name?: string | null; size?: '' | 'sm' | 'lg' }) {
+export function Avatar({ name, size = '' }: { name?: string | null; size?: '' | 'sm' | 'md' | 'lg' }) {
   return <span className={`avatar ${size}`}>{name ? name.slice(0, 1) : ''}</span>;
 }
 
