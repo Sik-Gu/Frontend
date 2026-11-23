@@ -207,6 +207,10 @@ img { display: block; max-width: 100%; }
   .search { width: 200px; }
 }
 
+/* ---------- 로그인·회원가입 ---------- */
+.auth-page { display: flex; justify-content: center; align-items: center; min-height: calc(100dvh - 62px); padding-top: 28px; padding-bottom: 28px; }
+.auth-card { width: 100%; padding: 40px; }
+
 /* ---------- 모바일 (폰 화면) ---------- */
 .table-wrap { overflow-x: auto; }
 
@@ -219,6 +223,8 @@ img { display: block; max-width: 100%; }
   .search { width: 100%; }
 
   .page { padding: 16px 16px 48px; }
+  .auth-page { min-height: calc(100dvh - 54px); padding-top: 16px; padding-bottom: 16px; }
+  .auth-card { padding: 24px; }
 
   /* 가로 2단 배치 → 세로로 쌓기 (인라인 고정 너비도 무시) */
   .split { flex-direction: column; align-items: stretch !important; }

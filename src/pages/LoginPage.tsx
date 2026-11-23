@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { authApi } from '../api/endpoints';
 import LocationPicker from '../components/LocationPicker';
 import { useSession, useToast } from '../lib/session';
@@ -7,14 +7,20 @@ import { useSession, useToast } from '../lib/session';
 // 백엔드 AuthPatterns.PASSWORD 와 같은 규칙
 const PASSWORD_RULE = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,20}$/;
 
-/** 01 로그인·회원가입 */
+/** 01 로그인 */
 export default function LoginPage() {
   return (
-    <div className="page">
-      <div className="row split" style={{ gap: 40, alignItems: 'flex-start', justifyContent: 'center', paddingTop: 28 }}>
-        <LoginCard />
-        <SignupCard />
-      </div>
+    <div className="page auth-page">
+      <LoginCard />
+    </div>
+  );
+}
+
+/** 01 회원가입 */
+export function SignupPage() {
+  return (
+    <div className="page auth-page">
+      <SignupCard />
     </div>
   );
 }
@@ -42,7 +48,7 @@ function LoginCard() {
   };
 
   return (
-    <form className="card stack" style={{ width: 460, padding: 40, gap: 20 }} onSubmit={submit}>
+    <form className="card stack auth-card" style={{ maxWidth: 460, gap: 20 }} onSubmit={submit}>
       <div>
         <h1 style={{ fontSize: 26, margin: 0 }}>로그인</h1>
         <p className="muted" style={{ margin: '8px 0 0' }}>학교 이메일로 인증된 이웃과 공동구매해요</p>
@@ -54,10 +60,11 @@ function LoginCard() {
         <input id="login-pw" className="input" type="password" placeholder="••••••••" value={password}
           onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required /></div>
       <button className="btn btn-primary btn-block" disabled={busy}>{busy ? '로그인 중…' : '로그인'}</button>
-      <div className="row between small">
-        <span className="muted" title="MVP 범위 밖이에요">비밀번호 찾기 (준비 중)</span>
-        <span style={{ color: '#404040', fontWeight: 500 }}>아직 회원이 아니신가요? 오른쪽에서 가입 →</span>
+      <div className="small muted" style={{ textAlign: 'center' }}>
+        아직 회원이 아니신가요?{' '}
+        <Link to="/signup" style={{ color: 'var(--text-strong)', fontWeight: 700, textDecoration: 'underline' }}>회원가입하기</Link>
       </div>
+      <div className="small muted" style={{ textAlign: 'center' }} title="MVP 범위 밖이에요">비밀번호 찾기 (준비 중)</div>
     </form>
   );
 }
@@ -125,7 +132,7 @@ function SignupCard() {
   );
 
   return (
-    <div className="card stack" style={{ width: 560, padding: 40, gap: 20 }}>
+    <div className="card stack auth-card" style={{ maxWidth: 560, gap: 20 }}>
       <h1 style={{ fontSize: 26, margin: 0 }}>회원가입</h1>
       <div className="row" style={{ gap: 10 }}>
         {chip(1, '이메일 인증')}<span className="muted">—</span>{chip(2, '정보 입력')}<span className="muted">—</span>{chip(3, '동네 설정')}
@@ -176,6 +183,10 @@ function SignupCard() {
             disabled={busy || step !== 2 || !password || !!pwError || password !== password2} onClick={signup}>
             가입하기
           </button>
+          <div className="small muted" style={{ textAlign: 'center' }}>
+            이미 계정이 있나요?{' '}
+            <Link to="/login" style={{ color: 'var(--text-strong)', fontWeight: 700, textDecoration: 'underline' }}>로그인하기</Link>
+          </div>
         </>
       )}
     </div>

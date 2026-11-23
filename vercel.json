@@ -1,5 +1,7 @@
 {
   "rewrites": [
+    { "source": "/api/:path*", "destination": "https://13-238-39-134.sslip.io/api/:path*" },
+    { "source": "/images/:path*", "destination": "https://13-238-39-134.sslip.io/images/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

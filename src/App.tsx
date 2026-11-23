@@ -4,7 +4,7 @@ import Header from './components/Header';
 import LocationPicker from './components/LocationPicker';
 import ChatPage from './pages/ChatPage';
 import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
+import LoginPage, { SignupPage } from './pages/LoginPage';
 import MyPage from './pages/MyPage';
 import PointPage from './pages/PointPage';
 import PostCreatePage from './pages/PostCreatePage';
@@ -36,10 +36,11 @@ function SetupLocationPage() {
   );
 }
 
-function LoginRoute() {
+/** 로그인·회원가입 화면: 이미 로그인했으면 홈으로 */
+function GuestOnly({ children }: { children: ReactNode }) {
   const { me, loading } = useSession();
   if (loading) return null;
-  return me ? <Navigate to="/" replace /> : <LoginPage />;
+  return me ? <Navigate to="/" replace /> : <>{children}</>;
 }
 
 export default function App() {
@@ -49,7 +50,8 @@ export default function App() {
         <SessionProvider>
           <Header />
           <Routes>
-            <Route path="/login" element={<LoginRoute />} />
+            <Route path="/login" element={<GuestOnly><LoginPage /></GuestOnly>} />
+            <Route path="/signup" element={<GuestOnly><SignupPage /></GuestOnly>} />
             <Route path="/setup-location" element={<SetupLocationPage />} />
             <Route path="/" element={<Protected><HomePage /></Protected>} />
             <Route path="/posts/new" element={<Protected><PostCreatePage /></Protected>} />
