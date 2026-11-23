@@ -24,7 +24,11 @@ export default function Header() {
         </Link>
         {me?.role === 'ADMIN' && (
           <>
-            <nav className="nav"><NavLink to="/admin">신고 관리</NavLink></nav>
+            <nav className="nav">
+              <NavLink to="/admin" end>대시보드</NavLink>
+              <NavLink to="/admin/users">이용자</NavLink>
+              <NavLink to="/admin/reports">신고 관리</NavLink>
+            </nav>
             <div className="header-right">
               <span className="small muted">관리자 · {me.email}</span>
               <button className="btn btn-secondary btn-sm" onClick={async () => { await logout(); navigate('/login'); }}>로그아웃</button>

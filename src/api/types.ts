@@ -170,3 +170,38 @@ export interface AdminReport {
   messages: { messageId: number; type: MessageType; content: string | null; imageUrl: string | null; sentAt: string }[];
   status: ReportStatus; createdAt: string; reporter: AdminUser; target: AdminUser;
 }
+
+// ---------- 관리자: 통계 ----------
+export interface NameCount { name: string; count: number; }
+export interface StatsSummary {
+  generatedAt: string;
+  users: { total: number; newToday: number; newThisWeek: number; suspended: number };
+  posts: {
+    total: number; newToday: number; byStatus: Record<PostStatus, number>; byCategory: Record<Category, number>;
+    /** 모집이 끝난 공구 중 모집 성공 비율 0~1 (끝난 공구가 없으면 null) */
+    recruitSuccessRate: number | null; avgParticipants: number | null;
+  };
+  points: { chargedToday: number; chargedTotal: number; paidTotal: number; refundedTotal: number; settledTotal: number; heldNow: number };
+  reports: { pending: number; total: number };
+  topUniversities: NameCount[];
+  topDongs: NameCount[];
+}
+export interface DailyStat {
+  date: string; newUsers: number; newPosts: number; newParticipations: number;
+  settledPosts: number; cancelledPosts: number; chargeAmount: number;
+}
+
+// ---------- 관리자: 이용자 ----------
+export interface AdminUserItem extends AdminUser {
+  universityName: string | null; dongName: string | null; ratingAvg: number | null; tradeCount: number; createdAt: string;
+}
+export interface AdminUserDetail {
+  user: AdminUserItem; overdueCount: number; availablePoint: number; heldPoint: number;
+  hostedPostCount: number; joinedPostCount: number;
+  reportsReceived: number; pendingReportsReceived: number; reportsMade: number;
+  recentParticipations: {
+    postId: number; title: string; postStatus: PostStatus; role: ParticipationRole; units: number;
+    joinedAt: string; leftAt: string | null;
+  }[];
+  recentReports: { reportId: number; reason: ReportReason; status: ReportStatus; reporterNickname: string; createdAt: string }[];
+}
