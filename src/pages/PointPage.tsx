@@ -4,6 +4,7 @@ import { pointApi } from '../api/endpoints';
 import type { ChargeConfirmResponse, ChargeMethod, ChargePrepareResponse, PointMe, PointTransaction, PointTxType } from '../api/types';
 import { Modal } from '../components/ui';
 import { pt, shortDateTime, signedPt, TX_LABEL } from '../lib/format';
+import { isUserCancel, openTossPayment } from '../lib/toss';
 import { useSession, useToast } from '../lib/session';
 
 const AMOUNTS = [5000, 10000, 30000, 50000];
@@ -30,6 +31,8 @@ export default function PointPage() {
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
   const [busy, setBusy] = useState(false);
+  // 마지막 충전 준비 때 서버가 알려 준 PG. 안내 문구에만 쓴다 (모르면 null)
+  const [provider, setProvider] = useState<ChargePrepareResponse['pgProvider'] | null>(null);
 
   const loadWallet = useCallback(async () => {
     try { setWallet(await pointApi.me()); } catch (e) { toast.error(e); }
@@ -53,13 +56,21 @@ export default function PointPage() {
 
   const chargeAmount = custom ? Number(custom) : amount;
 
-  // 1단계: 충전 준비 → 주문번호 발급 → (원래는 PG 결제창) 가짜 결제창을 연다
+  // 1단계: 충전 준비 → 주문번호 발급 → 서버 PG가 토스면 토스 결제창, 가짜 PG면 가짜 결제창을 연다
+  // 토스는 결제가 끝나면 /points/charge/success 로 이동하고, 그 화면(ChargeResultPage)이 2단계 승인을 부른다
   const prepare = async () => {
     setBusy(true);
     try {
-      setPending(await pointApi.prepareCharge(chargeAmount, method));
+      const order = await pointApi.prepareCharge(chargeAmount, method);
+      setProvider(order.pgProvider);
+      if (order.pgProvider === 'TOSS') {
+        await openTossPayment(order, method);
+      } else {
+        setPending(order);
+      }
     } catch (e) {
-      toast.error(e);
+      if (isUserCancel(e)) toast.ok('결제를 그만뒀어요. 준비된 주문은 30분 뒤 만료돼요.');
+      else toast.error(e);
     } finally {
       setBusy(false);
     }
@@ -137,7 +148,12 @@ export default function PointPage() {
             <button className="btn btn-primary btn-block" disabled={busy || !chargeAmount} onClick={prepare}>
               {chargeAmount ? `${chargeAmount.toLocaleString()}원 결제하기` : '충전할 금액을 골라 주세요'}
             </button>
-            <p className="hint" style={{ margin: 0 }}>개발 환경이라 실제 돈은 나가지 않아요 (가짜 PG). 결제창에서 성공·실패를 골라 볼 수 있어요.</p>
+            {provider === 'MOCK' && (
+              <p className="hint" style={{ margin: 0 }}>개발 환경이라 실제 돈은 나가지 않아요 (가짜 PG). 결제창에서 성공·실패를 골라 볼 수 있어요.</p>
+            )}
+            {provider === 'TOSS' && (
+              <p className="hint" style={{ margin: 0 }}>토스페이먼츠 결제창으로 결제해요. 결제가 끝나면 자동으로 충전돼요.</p>
+            )}
           </div>
 
           {lastDone && (

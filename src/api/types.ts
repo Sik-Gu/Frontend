@@ -98,7 +98,9 @@ export interface ReceiptResult { receiptStatus: ReceiptStatus; postStatus: PostS
 
 // ---------- 포인트 ----------
 export interface PointMe { availableBalance: number; heldAmount: number; updatedAt: string | null; }
-export interface ChargePrepareResponse { orderId: string; amount: number; orderName: string; }
+export type PgProvider = 'TOSS' | 'MOCK';
+/** pgProvider 가 TOSS 면 clientKey 로 토스 결제창을, MOCK 이면 가짜 결제창을 연다 */
+export interface ChargePrepareResponse { orderId: string; amount: number; orderName: string; pgProvider: PgProvider; clientKey: string | null; }
 export interface ChargeConfirmResponse { orderId: string; chargedPoint: number; balanceAfter: number; }
 export interface PointTransaction {
   transactionId: number; type: PointTxType; description: string; amount: number;

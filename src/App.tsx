@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import LocationPicker from './components/LocationPicker';
+import ChargeResultPage from './pages/ChargeResultPage';
 import ChatPage from './pages/ChatPage';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -57,6 +58,9 @@ export default function App() {
             <Route path="/chats" element={<Protected><ChatPage /></Protected>} />
             <Route path="/chats/:roomId" element={<Protected><ChatPage /></Protected>} />
             <Route path="/points" element={<Protected><PointPage /></Protected>} />
+            {/* 토스 결제창이 끝나면 돌아오는 주소 (lib/toss.ts 의 successUrl · failUrl) */}
+            <Route path="/points/charge/success" element={<Protected><ChargeResultPage result="success" /></Protected>} />
+            <Route path="/points/charge/fail" element={<Protected><ChargeResultPage result="fail" /></Protected>} />
             <Route path="/me" element={<Protected><MyPage /></Protected>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
