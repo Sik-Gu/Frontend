@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import LocationPicker from './components/LocationPicker';
@@ -93,6 +94,8 @@ export default function App() {
             <Route path="/me" element={<Protected><MyPage /></Protected>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          {/* Vercel Web Analytics: 배포된 사이트의 방문자·페이지 조회 수집 (로컬 dev에서는 수집 안 됨) */}
+          <Analytics />
         </SessionProvider>
       </ToastProvider>
     </BrowserRouter>
