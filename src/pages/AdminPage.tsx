@@ -65,6 +65,22 @@ export default function AdminPage() {
 }
 
 function ReportCard({ report: r, onChanged }: { report: AdminReport; onChanged: () => void }) {
+  const toast = useToast();
+  const [busy, setBusy] = useState(false);
+  const markDone = async () => {
+    const memo = window.prompt('처리 메모 (서버 작업 기록에만 남아요). 제재가 필요하면 아래 정지 버튼을 따로 눌러 주세요.', '');
+    if (memo === null) return;
+    setBusy(true);
+    try {
+      await adminApi.reportDone(r.reportId, memo.trim());
+      toast.ok('신고를 처리 완료로 바꿨어요.');
+      onChanged();
+    } catch (e) {
+      toast.error(e);
+    } finally {
+      setBusy(false);
+    }
+  };
   return (
     <div className="card stack">
       <div className="row between">
@@ -73,7 +89,10 @@ function ReportCard({ report: r, onChanged }: { report: AdminReport; onChanged: 
           {r.violationStage && <span className="badge outline">{STAGE_LABEL[r.violationStage]} 단계</span>}
           <span className={`badge${r.status === 'DONE' ? ' muted' : ' outline'}`}>{r.status === 'DONE' ? '처리 완료' : '처리 전'}</span>
         </div>
-        <span className="small muted">#{r.reportId} · {fullDateTime(r.createdAt)}</span>
+        <div className="row" style={{ gap: 8 }}>
+          <span className="small muted">#{r.reportId} · {fullDateTime(r.createdAt)}</span>
+          {r.status === 'PENDING' && <button className="btn btn-primary btn-sm" disabled={busy} onClick={markDone}>처리 완료</button>}
+        </div>
       </div>
 
       <div className="row split" style={{ gap: 16, alignItems: 'stretch' }}>

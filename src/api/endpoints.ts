@@ -41,6 +41,24 @@ export const adminApi = {
   users: (keyword: string | undefined, status: T.UserStatus | undefined, page = 0) =>
     get<T.Page<T.AdminUserItem>>(`/api/admin/users${qs({ keyword, status, page, size: 20 })}`),
   user: (userId: number) => get<T.AdminUserDetail>(`/api/admin/users/${userId}`),
+  userPoints: (userId: number, page = 0) =>
+    get<T.Page<T.PointTransaction>>(`/api/admin/users/${userId}/points${qs({ page, size: 20 })}`),
+  posts: (p: { keyword?: string; status?: T.PostStatus; category?: T.Category; attention?: boolean; page?: number }) =>
+    get<T.Page<T.AdminPostItem>>(`/api/admin/posts${qs({ ...p, attention: p.attention || undefined, size: 20 })}`),
+  post: (postId: number) => get<T.AdminPostDetail>(`/api/admin/posts/${postId}`),
+  cancelPost: (postId: number, reason: string) =>
+    post<T.PostCancelResponse>(`/api/admin/posts/${postId}/cancel`, { reason }),
+  deletePost: (postId: number, reason: string) =>
+    post<{ postStatus: T.PostStatus; originalTitle: string; refundedCount: number; refundedPoint: number }>(
+      `/api/admin/posts/${postId}/delete`, { reason }),
+  sendPostChat: (postId: number, message: string) => post<null>(`/api/admin/posts/${postId}/chat`, { message }),
+  confirmReceipt: (postId: number, userId: number) =>
+    post<T.ResolveResult>(`/api/admin/posts/${postId}/participants/${userId}/receive`),
+  inquiries: (resolved: boolean | undefined, page = 0) =>
+    get<T.Page<T.AdminInquiry>>(`/api/admin/inquiries${qs({ resolved, page, size: 20 })}`),
+  resolveInquiry: (inquiryId: number, resolution: T.InquiryResolution, memo: string) =>
+    post<T.ResolveResult>(`/api/admin/inquiries/${inquiryId}/resolve`, { resolution, memo }),
+  reportDone: (reportId: number, memo: string) => post<T.AdminReport>(`/api/admin/reports/${reportId}/done`, { memo }),
   reports: (status: T.ReportStatus | undefined, page = 0) =>
     get<T.Page<T.AdminReport>>(`/api/admin/reports${qs({ status, page, size: 20 })}`),
   changeUserStatus: (userId: number, status: T.UserStatus, suspendedUntil?: string | null) =>

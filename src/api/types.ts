@@ -182,7 +182,7 @@ export interface StatsSummary {
     recruitSuccessRate: number | null; avgParticipants: number | null;
   };
   points: { chargedToday: number; chargedTotal: number; paidTotal: number; refundedTotal: number; settledTotal: number; heldNow: number };
-  reports: { pending: number; total: number };
+  reports: { pending: number; total: number; openInquiries: number };
   topUniversities: NameCount[];
   topDongs: NameCount[];
 }
@@ -205,3 +205,42 @@ export interface AdminUserDetail {
   }[];
   recentReports: { reportId: number; reason: ReportReason; status: ReportStatus; reporterNickname: string; createdAt: string }[];
 }
+
+// ---------- 관리자: 공구·수령 문의 ----------
+export type InquiryType = 'NOT_RECEIVED' | 'SHORT_QUANTITY' | 'WRONG_OR_DAMAGED' | 'ETC';
+export type DesiredResolution = 'REDELIVER' | 'PARTIAL_REFUND' | 'FULL_REFUND';
+export type InquiryStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED';
+export type InquiryResolution = 'REDELIVER' | 'PARTIAL_REFUND' | 'FULL_REFUND' | 'REJECTED';
+export interface UserRef { userId: number; nickname: string; email: string; status: UserStatus; }
+export interface AdminPostItem {
+  postId: number; title: string; category: Category; status: PostStatus; host: UserRef; dongName: string | null;
+  filledUnits: number; totalUnits: number; participantCount: number; totalPrice: number;
+  openInquiryCount: number; deadlineAt: string; createdAt: string;
+}
+export interface AdminInquiry {
+  inquiryId: number; postId: number; postTitle: string; user: UserRef; units: number; type: InquiryType;
+  receivedUnits: number | null; desiredResolution: DesiredResolution; content: string; imageUrls: string[];
+  status: InquiryStatus; resolution: InquiryResolution | null; refundAmount: number | null; adminMemo: string | null;
+  createdAt: string; resolvedAt: string | null;
+}
+export interface AdminParticipantRow {
+  user: UserRef; role: ParticipationRole; units: number; paidPoint: number; paymentStatus: PaymentStatus;
+  receiptStatus: ReceiptStatus; placeAgreed: boolean; joinedAt: string; receivedAt: string | null;
+  leftAt: string | null; leaveReason: LeaveReason | null;
+}
+export interface AdminPostDetail {
+  postId: number; title: string; content: string; productName: string; productLink: string | null; category: Category;
+  status: PostStatus; host: UserRef; dongName: string | null; distributionPlaceName: string | null;
+  totalUnits: number; filledUnits: number; unitPrice: number; totalPrice: number; viewCount: number; imageUrls: string[];
+  timeline: {
+    createdAt: string; deadlineAt: string; recruitedAt: string | null; orderedAt: string | null; shippedAt: string | null;
+    distributedAt: string | null; settledAt: string | null; cancelledAt: string | null;
+  };
+  order: {
+    courier: string | null; trackingNumber: string | null; registeredAt: string; distributeAt: string | null;
+    distributePlace: string | null; receiptImageUrls: string[];
+  } | null;
+  participants: AdminParticipantRow[];
+  inquiries: AdminInquiry[];
+}
+export interface ResolveResult { postId: number; postStatus: PostStatus; receiptStatus: ReceiptStatus; refundedPoint: number; }

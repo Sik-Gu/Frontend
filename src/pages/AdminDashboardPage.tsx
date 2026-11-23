@@ -54,6 +54,8 @@ export default function AdminDashboardPage() {
           sub={posts.avgParticipants === null ? '정산된 공구 없음' : `정산 공구 평균 ${posts.avgParticipants.toFixed(1)}명 참여`} />
         <Kpi label="처리 전 신고" value={`${num(reports.pending)}건`} sub={`누적 ${num(reports.total)}건 · 정지 계정 ${num(users.suspended)}명`}
           to="/admin/reports" alert={reports.pending > 0} />
+        <Kpi label="처리 전 수령 문의" value={`${num(reports.openInquiries)}건`} sub="문의가 걸린 공구는 정산이 멈춰 있어요"
+          to="/admin/inquiries" alert={reports.openInquiries > 0} />
       </div>
 
       <section className="card stack">

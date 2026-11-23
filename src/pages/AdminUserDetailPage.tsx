@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { adminApi } from '../api/endpoints';
-import type { AdminUserDetail } from '../api/types';
-import { STATUS_LABEL, fullDateTime, pt } from '../lib/format';
+import type { AdminUserDetail, Page, PointTransaction } from '../api/types';
+import { Pagination } from '../components/ui';
+import { STATUS_LABEL, TX_LABEL, fullDateTime, pt, signedPt } from '../lib/format';
 import { useToast } from '../lib/session';
 import { REASON_LABEL, UserBox } from './AdminPage';
 
@@ -52,7 +53,7 @@ export default function AdminUserDetailPage() {
               <tbody>
                 {data.recentParticipations.map((p) => (
                   <tr key={`${p.postId}-${p.joinedAt}`}>
-                    <td>{p.title} <span className="small muted">#{p.postId}</span></td>
+                    <td><Link to={`/admin/posts/${p.postId}`} style={{ textDecoration: 'underline' }}>{p.title}</Link> <span className="small muted">#{p.postId}</span></td>
                     <td>{p.role === 'HOST' ? '방장' : '참여자'}{p.leftAt && <span className="badge muted" style={{ marginLeft: 6 }}>나감</span>}</td>
                     <td className="num tabular">{p.units}</td>
                     <td>{STATUS_LABEL[p.postStatus]}</td>
@@ -88,7 +89,42 @@ export default function AdminUserDetailPage() {
           </div>
         )}
       </section>
+
+      <PointHistory userId={u.userId} />
     </div>
+  );
+}
+
+/** 포인트 거래 내역 (충전·결제·환급·정산) */
+function PointHistory({ userId }: { userId: number }) {
+  const toast = useToast();
+  const [page, setPage] = useState(0);
+  const [data, setData] = useState<Page<PointTransaction> | null>(null);
+  useEffect(() => { adminApi.userPoints(userId, page).then(setData).catch((e) => toast.error(e)); }, [userId, page, toast]);
+
+  return (
+    <section className="card stack">
+      <h2 className="card-title" style={{ margin: 0 }}>포인트 내역</h2>
+      {!data ? <p className="muted">불러오는 중…</p> : data.content.length === 0 ? <p className="muted">거래가 없어요.</p> : (
+        <div className="table-wrap">
+          <table className="table">
+            <thead><tr><th>종류</th><th>내용</th><th className="num">금액</th><th className="num">거래 후 잔액</th><th>시각</th></tr></thead>
+            <tbody>
+              {data.content.map((t) => (
+                <tr key={t.transactionId}>
+                  <td>{TX_LABEL[t.type]}</td>
+                  <td className="small">{t.postId ? <Link to={`/admin/posts/${t.postId}`} style={{ textDecoration: 'underline' }}>{t.description}</Link> : t.description}</td>
+                  <td className="num tabular">{signedPt(t.amount)}</td>
+                  <td className="num tabular">{pt(t.balanceAfter)}</td>
+                  <td className="small muted">{fullDateTime(t.createdAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {data && <Pagination page={data.page} hasNext={data.hasNext} total={data.totalElements} size={data.size} onChange={setPage} />}
+    </section>
   );
 }
 
