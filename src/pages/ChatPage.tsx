@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { tokens } from '../api/client';
 import { chatApi } from '../api/endpoints';
 import type { ChatMessage, ChatRoomDetail, ChatRoomStatus, ChatRoomSummary } from '../api/types';
+import ProfileModal from '../components/ProfileModal';
 import { Avatar, ImageBox, StatusBadge } from '../components/ui';
 import { ago, clock, won } from '../lib/format';
 import { useSession, useToast } from '../lib/session';
@@ -126,6 +127,7 @@ function ChatRoom({ roomId, client, connected, onActivity }: {
   const [cursor, setCursor] = useState<number | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [text, setText] = useState('');
+  const [profileOf, setProfileOf] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const box = useRef<HTMLDivElement>(null);
   const stickBottom = useRef(true);
@@ -204,7 +206,12 @@ function ChatRoom({ roomId, client, connected, onActivity }: {
         <Link to="/chats" className="chat-back" aria-label="채팅 목록으로">←</Link>
         <div className="grow">
           <div className="strong" style={{ fontSize: 16 }}>{room.name}</div>
-          <div className="small muted">참여자 {room.participantCount}명 · {room.participants.map((p) => p.nickname + (p.role === 'HOST' ? '(호스트)' : '')).join(', ')}</div>
+          <div className="small muted">참여자 {room.participantCount}명 · {room.participants.map((p, i) => (
+            <span key={p.userId}>{i > 0 ? ', ' : ''}
+              <button type="button" className="link-button small muted" title="프로필 보기" onClick={() => setProfileOf(p.userId)}>
+                {p.nickname}{p.role === 'HOST' ? '(호스트)' : ''}</button>
+            </span>
+          ))}</div>
         </div>
         <Link to={`/posts/${room.post.postId}`} className="btn btn-secondary btn-sm">공구 게시글 보기</Link>
       </div>
@@ -233,9 +240,10 @@ function ChatRoom({ roomId, client, connected, onActivity }: {
             <div key={m.messageId} className="msg-mine">{body}<span className="small muted">{clock(m.sentAt)}</span></div>
           ) : (
             <div key={m.messageId} className="msg-other">
-              <Avatar name={m.senderNickname} size="sm" />
+              <button type="button" className="link-button" title="프로필 보기" onClick={() => m.senderId && setProfileOf(m.senderId)}>
+                <Avatar name={m.senderNickname} size="sm" /></button>
               <div className="stack" style={{ gap: 4 }}>
-                <span className="small muted">{m.senderNickname}</span>
+                <button type="button" className="link-button small muted" onClick={() => m.senderId && setProfileOf(m.senderId)}>{m.senderNickname}</button>
                 <div className="row" style={{ alignItems: 'flex-end', gap: 6 }}>{body}<span className="small muted">{clock(m.sentAt)}</span></div>
               </div>
             </div>
@@ -249,6 +257,12 @@ function ChatRoom({ roomId, client, connected, onActivity }: {
           disabled={closed} onChange={(e) => setText(e.target.value)} />
         <button className="btn btn-primary" disabled={closed || !text.trim()}>전송</button>
       </form>
+
+      {profileOf !== null && (
+        <ProfileModal userId={profileOf} onClose={() => setProfileOf(null)}
+          role={room.participants.find((p) => p.userId === profileOf)?.role}
+          post={{ postId: room.post.postId, title: room.post.title, thumbnailUrl: room.post.thumbnailUrl, chatRoomId: room.chatRoomId }} />
+      )}
     </div>
   );
 }

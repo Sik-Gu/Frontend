@@ -17,6 +17,27 @@ export const userApi = {
   myPosts: (tab: T.MyPostTab, filter: T.MyPostFilter, page = 0) =>
     get<T.Page<T.MyPostCard>>(`/api/users/me/posts${qs({ tab, filter, page, size: 20 })}`),
   profile: (userId: number) => get<T.ProfileResponse>(`/api/users/${userId}`),
+  reviews: (userId: number, page = 0) =>
+    get<T.Page<T.ReceivedReview>>(`/api/users/${userId}/reviews${qs({ page, size: 10 })}`),
+  block: (userId: number) => post<unknown>(`/api/users/${userId}/block`),
+  unblock: (userId: number) => del<unknown>(`/api/users/${userId}/block`),
+};
+
+export const locationApi = {
+  /** 좌표 → 동 이름 (백엔드가 OpenStreetMap Nominatim 으로 조회) */
+  lookupDong: (latitude: number, longitude: number) =>
+    get<T.LocationResponse>(`/api/locations/dong${qs({ latitude, longitude })}`),
+};
+
+export const reportApi = {
+  create: (body: T.ReportCreateRequest) => post<T.ReportCreateResponse>('/api/reports', body),
+};
+
+export const notificationApi = {
+  list: (page = 0) => get<T.Page<T.NotificationItem>>(`/api/notifications${qs({ page, size: 20 })}`),
+  unreadCount: () => get<{ unreadCount: number }>('/api/notifications/unread-count'),
+  read: (id: number) => patch<T.NotificationItem>(`/api/notifications/${id}/read`),
+  readAll: () => patch<{ unreadCount: number }>('/api/notifications/read-all'),
 };
 
 export const imageApi = {
@@ -35,8 +56,12 @@ export const postApi = {
   search: (s: PostSearch) => get<T.Page<T.PostCard>>(`/api/posts${qs({ ...s, size: 9 })}`),
   detail: (postId: number) => get<T.PostDetail>(`/api/posts/${postId}`),
   create: (body: T.PostCreateRequest) => post<T.PostCreateResponse>('/api/posts', body),
+  update: (postId: number, body: T.PostUpdateRequest) => patch<{ postId: number }>(`/api/posts/${postId}`, body),
   cancel: (postId: number) => del<T.PostCancelResponse>(`/api/posts/${postId}`),
   join: (postId: number, units: number) => post<T.JoinResponse>(`/api/posts/${postId}/participations`, { units }),
+  /** 참여 중인 공구에 수량 추가 (늘리기만, 모집중에만) */
+  addUnits: (postId: number, units: number) =>
+    patch<T.JoinResponse>(`/api/posts/${postId}/participations/me/units`, { units }),
   leave: (postId: number, reason: T.LeaveReason) =>
     del<T.LeaveResponse>(`/api/posts/${postId}/participations/me${qs({ reason })}`),
   participations: (postId: number) => get<T.ParticipationStatusResponse>(`/api/posts/${postId}/participations`),

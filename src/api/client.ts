@@ -15,20 +15,24 @@ export class ApiError extends Error {
   }
 }
 
-// 토큰은 탭마다 따로 둔다 (sessionStorage).
-// localStorage는 같은 브라우저의 모든 탭이 같이 써서, 다른 탭에서 B로 로그인하면
-// A로 보이던 탭의 요청·채팅까지 B 토큰으로 나가 버렸다. 탭마다 다른 계정으로 확인할 수 있게 분리한다.
+// 토큰은 localStorage 에 둔다: 새로고침·새 탭·브라우저를 다시 열어도 로그인이 유지된다.
+// Access Token 이 만료되면 아래 reissueOnce 가 Refresh Token 으로 자동 재발급하므로,
+// Refresh Token 이 유효한 동안(로그아웃 전까지)은 다시 로그인할 필요가 없다.
+// 같은 브라우저의 탭들은 같은 계정을 쓴다 (다른 계정 테스트는 시크릿 창이나 다른 브라우저로).
 function read(key: string): string | null {
-  try { return sessionStorage.getItem(key); } catch { return null; }
+  try { return localStorage.getItem(key); } catch { return null; }
 }
 function write(key: string, value: string | null) {
   try {
-    if (value === null) sessionStorage.removeItem(key);
-    else sessionStorage.setItem(key, value);
+    if (value === null) localStorage.removeItem(key);
+    else localStorage.setItem(key, value);
   } catch { /* 저장소를 못 쓰면 새로고침 전까지만 로그인 유지 */ }
 }
-// 예전 버전이 localStorage에 남긴 토큰은 다른 탭과 섞이지 않게 지운다
-try { localStorage.removeItem(ACCESS_KEY); localStorage.removeItem(REFRESH_KEY); } catch { /* 무시 */ }
+// 예전 버전이 탭별(sessionStorage)로 남긴 토큰은 정리한다
+try { sessionStorage.removeItem(ACCESS_KEY); sessionStorage.removeItem(REFRESH_KEY); } catch { /* 무시 */ }
+
+/** 다른 탭에서 로그인·로그아웃하면 이 탭도 따라가도록 알린다 */
+export const TOKEN_KEYS = [ACCESS_KEY, REFRESH_KEY];
 
 export const tokens = {
   get access() { return read(ACCESS_KEY); },

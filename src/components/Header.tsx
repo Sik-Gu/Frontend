@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 import { pt } from '../lib/format';
 import { useSession } from '../lib/session';
+import NotificationBell from './NotificationBell';
 import { Avatar } from './ui';
 
 export default function Header() {
@@ -33,6 +34,7 @@ export default function Header() {
             </form>
             <Link to="/points" className="point-chip tabular" title="사용 가능 포인트">{pt(me.point.availableBalance)}</Link>
             <Link to="/posts/new" className="btn btn-primary btn-sm">+ 공구 열기</Link>
+            <NotificationBell />
             <Link to="/me" title={me.nickname}><Avatar name={me.nickname} /></Link>
           </div>
         )}
