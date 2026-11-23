@@ -125,8 +125,8 @@ export default function HomePage() {
         {loading && !data ? <Empty>불러오는 중…</Empty>
           : !data || data.content.length === 0 ? (
             <Empty>
-              {radiusLabel} 안에 공구가 없어요.<br />
-              <span className="small">거리를 넓히거나, 직접 ‘공구 열기’로 첫 공구를 열어 보세요.</span>
+              {radiusLabel} 안에 공구 없음<br />
+              <span className="small">거리를 넓히거나 직접 ‘공구 열기’로 첫 공구 열기</span>
             </Empty>
           ) : (
             <div className="post-grid">

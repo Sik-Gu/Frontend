@@ -13,13 +13,13 @@ import {
 import { useSession, useToast } from '../lib/session';
 
 const STEP_GUIDE: Record<string, string> = {
-  RECRUITING: '총 단위가 모두 모이면 자동으로 모집완료돼요',
-  RECRUITED: '호스트가 나눔 장소를 제안하고, 모두 동의하면 주문해요',
-  ORDERED: '호스트가 주문을 마쳤어요. 배송을 기다리는 중이에요',
-  SHIPPING: '상품이 오는 중이에요. 도착하면 호스트가 나눔 일시를 정해요',
-  DISTRIBUTED: '물건을 받으면 ‘받았어요’를 눌러 주세요. 모두 누르면 자동 정산돼요',
-  SETTLED: '정산이 끝났어요. 3일 안에 후기를 남겨 주세요',
-  CANCELLED: '취소된 공구예요. 결제한 포인트는 모두 환급됐어요',
+  RECRUITING: '총 단위가 모두 모이면 자동 모집 완료',
+  RECRUITED: '호스트가 나눔 장소 제안 → 전원 동의 시 주문',
+  ORDERED: '호스트 주문 완료 · 배송 대기 중',
+  SHIPPING: '상품 배송 중 · 도착 후 호스트가 나눔 일시 지정',
+  DISTRIBUTED: '물건을 받으면 ‘받았어요’ 누르기 · 전원 확인 시 자동 정산',
+  SETTLED: '정산 완료 · 3일 안에 후기 작성 가능',
+  CANCELLED: '취소된 공구 · 결제한 포인트 전액 환급됨',
 };
 
 /** 03 공구 상세 (03-B~E: 상태·역할에 따라 버튼이 바뀐다) */
@@ -314,18 +314,18 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
           </div>
           <button className="btn btn-primary btn-block" onClick={() => act(() => postApi.join(id, units), (r) => {
             const j = r as { paidPoint: number; balanceAfter: number };
-            return `참여했어요! ${pt(j.paidPoint)} 결제(보류) · 남은 포인트 ${pt(j.balanceAfter)}`;
+            return `참여 완료 · ${pt(j.paidPoint)} 결제(보류) · 남은 포인트 ${pt(j.balanceAfter)}`;
           })}>{units}단위 참여하기 · {pt(price)}</button>
           {balance < price && (
-            <div className="notice danger small">
-              사용 가능 포인트 {pt(balance)}로는 부족해요 ({pt(price - balance)} 더 필요). <Link to="/points" style={{ textDecoration: 'underline' }}>충전하기</Link>
+            <div className="notice small">
+              사용 가능 포인트 {pt(balance)} · {pt(price - balance)} 부족. <Link to="/points" style={{ textDecoration: 'underline' }}>충전하기</Link>
             </div>
           )}
-          <p className="small muted" style={{ margin: 0 }}>참여하면 바로 포인트가 결제되어 보관(보류)되고, 정산 때 호스트에게 전달돼요. 모집 중 취소하면 전액 환급돼요.</p>
+          <p className="small muted" style={{ margin: 0 }}>참여 시 포인트 즉시 결제(보류) · 정산 때 호스트에게 전달 · 모집 중 취소 시 전액 환급</p>
         </div>,
       );
     } else if (post.status !== 'CANCELLED') {
-      blocks.push(<div key="closed" className="notice">모집이 끝난 공구예요.</div>);
+      blocks.push(<div key="closed" className="notice">모집 마감된 공구</div>);
     }
   }
 
@@ -352,16 +352,16 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
               <button className="btn btn-ghost" disabled={addCount >= left} onClick={() => setMoreUnits(addCount + 1)}>+</button>
             </div>
           </div>
-          <div className="small muted">남은 {left}단위 안에서 늘릴 수 있어요 · 늘린 만큼 바로 결제(보류)돼요</div>
+          <div className="small muted">남은 {left}단위 안에서 추가 가능 · 추가분 즉시 결제(보류)</div>
           <button className="btn btn-secondary btn-block" onClick={async () => {
             if (await act(() => postApi.addUnits(id, addCount), (r) => {
               const j = r as { paidPoint: number; balanceAfter: number; postStatus: string };
-              return `${addCount}단위를 더 담았어요! ${pt(j.paidPoint)} 결제(보류) · 남은 포인트 ${pt(j.balanceAfter)}`
-                + (j.postStatus === 'RECRUITED' ? ' · 모집이 완료됐어요' : '');
+              return `${addCount}단위 추가 완료 · ${pt(j.paidPoint)} 결제(보류) · 남은 포인트 ${pt(j.balanceAfter)}`
+                + (j.postStatus === 'RECRUITED' ? ' · 모집 완료' : '');
             })) setMoreUnits(1);
           }}>+{addCount}단위 추가하기 · {pt(addPrice)}</button>
           {balance < addPrice && (
-            <div className="notice danger small">사용 가능 포인트 {pt(balance)}로는 부족해요. <Link to="/points" style={{ textDecoration: 'underline' }}>충전하기</Link></div>
+            <div className="notice small">사용 가능 포인트 {pt(balance)} · {pt(addPrice - balance)} 부족. <Link to="/points" style={{ textDecoration: 'underline' }}>충전하기</Link></div>
           )}
         </div>,
       );
@@ -380,7 +380,7 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
           <div className="row" style={{ gap: 8 }}>
             <input className="input" placeholder="예) 중앙대 정문 앞" value={placeName} onChange={(e) => setPlaceName(e.target.value)} />
             <button className="btn btn-secondary" disabled={!placeName.trim()}
-              onClick={() => act(() => postApi.proposePlace(id, placeName.trim()), '나눔 장소를 제안했어요. 참여자 동의를 기다려요.')}>제안</button>
+              onClick={() => act(() => postApi.proposePlace(id, placeName.trim()), '나눔 장소 제안 완료 · 참여자 동의 대기')}>제안</button>
           </div>
           {place?.name && <div className="small muted">현재 ‘{place.name}’ · 동의 {place.agreedCount}/{place.memberCount}{place.allAgreed ? ' · 모두 동의' : ''}</div>}
         </div>,
@@ -392,7 +392,7 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
           <div className="small muted">동의 {place.agreedCount}/{place.memberCount}</div>
           {place.myAgreed ? <div className="small strong">동의했어요</div> : (
             <div className="row">
-              <button className="btn btn-primary grow" onClick={() => act(() => postApi.agreePlace(id), '나눔 장소에 동의했어요')}>동의</button>
+              <button className="btn btn-primary grow" onClick={() => act(() => postApi.agreePlace(id), '나눔 장소 동의 완료')}>동의</button>
               <button className="btn btn-danger" onClick={() => setConfirming('disagree')}>의견이 달라 나가기</button>
             </div>
           )}
@@ -407,10 +407,10 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
     blocks.push(
       <div key="order" className="stack sm">
         <div className="strong">영수증 등록하고 주문 완료하기</div>
-        {!canOrder && <div className="small muted">나눔 장소를 제안하고 참여자 모두 동의해야 주문할 수 있어요.</div>}
+        {!canOrder && <div className="small muted">나눔 장소 제안 후 참여자 전원 동의 시 주문 가능</div>}
         <ImageUploader type="RECEIPT" urls={receipts} onChange={setReceipts} max={5} label="+ 영수증" />
         <button className="btn btn-primary btn-block" disabled={!canOrder || receipts.length === 0}
-          onClick={async () => { if (await act(() => postApi.registerOrder(id, receipts), '주문 완료! 참여자에게 알렸어요.')) setReceipts([]); }}>
+          onClick={async () => { if (await act(() => postApi.registerOrder(id, receipts), '주문 완료 · 참여자에게 알림 발송')) setReceipts([]); }}>
           영수증 등록하고 주문 완료
         </button>
       </div>,
@@ -424,8 +424,8 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
           <input className="input" placeholder="택배사 (선택)" value={courier} onChange={(e) => setCourier(e.target.value)} />
           <input className="input" placeholder="송장번호 (선택)" value={tracking} onChange={(e) => setTracking(e.target.value.replace(/[^\d-]/g, ''))} />
         </div>
-        <div className="small muted">직접 사 오는 경우 비워 두고 눌러도 돼요. 택배사와 송장번호는 함께 입력해야 해요.</div>
-        <button className="btn btn-primary btn-block" onClick={() => act(() => postApi.ship(id, courier.trim(), tracking.trim()), '배송을 시작했어요')}>배송 시작</button>
+        <div className="small muted">직접 사 오는 경우 비워 두고 진행 가능 · 택배사와 송장번호는 함께 입력</div>
+        <button className="btn btn-primary btn-block" onClick={() => act(() => postApi.ship(id, courier.trim(), tracking.trim()), '배송 시작')}>배송 시작</button>
       </div>,
     );
   }
@@ -434,9 +434,9 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
       <div key="dist" className="stack sm">
         <div className="strong">나눔 일시 정하기</div>
         <input className="input" type="datetime-local" value={distributeAt} onChange={(e) => setDistributeAt(e.target.value)} />
-        <div className="small muted">장소는 합의한 ‘{place?.name ?? '-'}’ 그대로예요. 정하면 참여자가 ‘받았어요’를 누를 수 있어요 (호스트 몫은 자동 수령).</div>
+        <div className="small muted">장소는 합의한 ‘{place?.name ?? '-'}’ 그대로 · 일시를 정하면 참여자가 ‘받았어요’ 누르기 가능 (호스트 몫은 자동 수령)</div>
         <button className="btn btn-primary btn-block" disabled={!distributeAt}
-          onClick={() => act(() => postApi.distribute(id, toLocalDateTime(distributeAt)), '나눔 일시를 정했어요')}>나눔 일시 확정</button>
+          onClick={() => act(() => postApi.distribute(id, toLocalDateTime(distributeAt)), '나눔 일시 확정')}>나눔 일시 확정</button>
       </div>,
     );
   }
@@ -446,13 +446,13 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
     blocks.push(
       <button key="receive" className="btn btn-primary btn-block"
         onClick={() => act(() => postApi.confirmReceipt(id), (r) => (r as { postStatus: string }).postStatus === 'SETTLED'
-          ? '모두 받았어요! 정산이 끝나 호스트에게 포인트가 전달됐어요.' : '받았어요! 다른 참여자를 기다려요.')}>
+          ? '전원 수령 완료 · 정산되어 호스트에게 포인트 전달' : '수령 확인 완료 · 다른 참여자 대기')}>
         받았어요
       </button>,
     );
   }
   if (post.status === 'DISTRIBUTED' && status) {
-    blocks.push(<div key="recv" className="small muted">수령 확인 {status.receivedCount}/{status.totalCount} · 모두 확인되면 자동 정산돼요</div>);
+    blocks.push(<div key="recv" className="small muted">수령 확인 {status.receivedCount}/{status.totalCount}</div>);
   }
 
   // ----- 취소·나가기 -----
@@ -481,11 +481,11 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
               const kind = confirming;
               setConfirming(null);
               if (kind === 'cancel') {
-                const ok = await act(() => postApi.cancel(id), (r) => `공구를 취소했어요. ${(r as { refundedCount: number }).refundedCount}명에게 환급했어요.`);
+                const ok = await act(() => postApi.cancel(id), (r) => `공구 취소 완료 · ${(r as { refundedCount: number }).refundedCount}명 환급`);
                 if (ok) onCancelled();
               } else {
                 await act(() => postApi.leave(id, kind === 'disagree' ? 'PLACE_DISAGREEMENT' : 'CHANGED_MIND'),
-                  (r) => `나왔어요. ${pt((r as { refundedPoint: number }).refundedPoint)} 환급됐어요.`);
+                  (r) => `공구에서 나감 · ${pt((r as { refundedPoint: number }).refundedPoint)} 환급`);
               }
             }}>네, {confirming === 'cancel' ? '취소할게요' : '나갈게요'}</button>
           </div>
@@ -503,10 +503,10 @@ function ReviewCard({ data, postId, onDone }: { data: ReviewTargetsResponse; pos
   const [busy, setBusy] = useState(false);
 
   if (!data.canWrite && pending.length > 0) {
-    return <div className="card small muted">후기 작성 기간이 아니에요 (정산 후 3일까지{data.writableUntil ? `, ~${fullDateTime(data.writableUntil)}` : ''}).</div>;
+    return <div className="card small muted">후기 작성 기간 아님 (정산 후 3일까지{data.writableUntil ? `, ~${fullDateTime(data.writableUntil)}` : ''}).</div>;
   }
   if (pending.length === 0) {
-    return <div className="card small muted">후기를 모두 남겼어요. 고마워요!</div>;
+    return <div className="card small muted">후기 작성 완료</div>;
   }
 
   const submit = async () => {
@@ -515,7 +515,7 @@ function ReviewCard({ data, postId, onDone }: { data: ReviewTargetsResponse; pos
       await postApi.writeReviews(postId, pending.filter((t) => ratings[t.userId]).map((t) => ({
         targetUserId: t.userId, rating: ratings[t.userId], tags: tags[t.userId] ?? [],
       })));
-      toast.ok('후기를 남겼어요');
+      toast.ok('후기 작성 완료');
       onDone();
     } catch (e) {
       toast.error(e);

@@ -46,7 +46,7 @@ function SetupLocationPage() {
     <div className="page narrow">
       <div className="card stack">
         <h1 style={{ fontSize: 24, margin: 0 }}>우리 동네 설정</h1>
-        <p className="muted" style={{ margin: 0 }}>근처 공구를 보여줄 기준 위치예요. 설정해야 공구를 보고 열 수 있어요.</p>
+        <p className="muted" style={{ margin: 0 }}>근처 공구를 보여줄 기준 위치 · 설정해야 공구 보기·열기 가능</p>
         <LocationPicker submitLabel="동네 설정하고 시작하기" onDone={() => navigate('/')} />
       </div>
     </div>

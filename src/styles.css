@@ -20,9 +20,7 @@
   --text-muted: #66666e;
   --text-hint: #8a8a92;
   --danger: #b5232f;
-  --danger-bg: #fce9ea;
   --ok: #2e7d32;
-  --ok-bg: #e8f5e9;
   --radius-sm: 12px;
   --radius-md: 20px;
   --radius-lg: 28px;
@@ -169,8 +167,6 @@ svg.icon { flex-shrink: 0; }
 .badge.hot { background: var(--accent-soft); color: var(--accent-text); }
 
 .notice { background: var(--surface-muted); border-radius: var(--radius-sm); padding: 14px 16px; color: var(--text-body); font-size: 13px; }
-.notice.danger { background: var(--danger-bg); color: var(--danger); }
-.notice.ok { background: var(--ok-bg); color: var(--ok); }
 
 .row { display: flex; align-items: center; gap: 12px; }
 .row.between { justify-content: space-between; }
@@ -250,8 +246,8 @@ svg.icon { flex-shrink: 0; }
 .post-card-cta { background: var(--accent); color: #fff; border-radius: var(--radius-pill); padding: 6px 14px; font-size: 14px; font-weight: 700; white-space: nowrap; }
 
 /* ---------- 토스트·모달 ---------- */
-.toasts { position: fixed; right: 24px; bottom: 24px; z-index: 100; display: flex; flex-direction: column; gap: 8px; max-width: 420px; }
-.toast { background: var(--primary); color: var(--bg); padding: 12px 16px; border-radius: var(--radius-sm); box-shadow: 0 6px 20px rgba(20,20,24,.18); font-size: 13px; }
+.toasts { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; width: min(420px, calc(100vw - 32px)); pointer-events: none; }
+.toast { text-align: center; background: var(--primary); color: var(--bg); padding: 12px 16px; border-radius: var(--radius-sm); box-shadow: 0 6px 20px rgba(20,20,24,.18); font-size: 13px; }
 .toast.error { background: var(--danger); color: #fff; }
 .toast code { background: rgba(255,255,255,.18); padding: 1px 6px; border-radius: 4px; margin-right: 6px; font-size: 12px; }
 .modal-back { position: fixed; inset: 0; background: rgba(20,20,24,.45); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px; }
@@ -382,7 +378,6 @@ svg.icon { flex-shrink: 0; }
   .msg-mine, .msg-other { max-width: 85%; }
 
   .modal { padding: 20px; }
-  .toasts { left: 16px; right: 16px; bottom: 16px; max-width: none; }
 }
 
 /* 카드 사진 넘기기 */

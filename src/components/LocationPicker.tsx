@@ -46,10 +46,10 @@ export default function LocationPicker({ onDone, submitLabel = '이 동네로 �
   }, [latNum, lngNum, valid, resolved]);
 
   const useGps = () => {
-    if (!navigator.geolocation) { toast.error(new Error('이 브라우저는 위치 기능을 지원하지 않아요')); return; }
+    if (!navigator.geolocation) { toast.error(new Error('이 브라우저는 위치 기능 미지원')); return; }
     navigator.geolocation.getCurrentPosition(
       (p) => { setLat(p.coords.latitude.toFixed(6)); setLng(p.coords.longitude.toFixed(6)); },
-      () => toast.error(new Error('위치 권한이 없어 현재 위치를 가져오지 못했어요')),
+      () => toast.error(new Error('위치 권한 없음 · 현재 위치 확인 불가')),
     );
   };
 
@@ -59,7 +59,7 @@ export default function LocationPicker({ onDone, submitLabel = '이 동네로 �
     try {
       await userApi.setLocation(dong.name, dong.lat, dong.lng);
       await refresh(); // 내 위치가 바뀌면 홈 목록이 새 동네 기준으로 다시 불러온다
-      toast.ok(`동네를 ${dong.name}(으)로 설정했어요`);
+      toast.ok(`동네 설정 완료 · ${dong.name}`);
       onDone?.();
     } catch (e) {
       toast.error(e);
@@ -88,10 +88,10 @@ export default function LocationPicker({ onDone, submitLabel = '이 동네로 �
           style={{ background: 'var(--surface-muted)', color: resolved ? 'var(--text-strong)' : lookupError ? 'var(--danger)' : 'var(--text-muted)', cursor: 'default' }} />
       </div>
       {!valid && (lat !== '' || lng !== '') && (
-        <p className="hint" style={{ margin: 0, color: 'var(--danger)' }}>위도는 -90~90, 경도는 -180~180 사이 숫자로 입력해 주세요.</p>
+        <p className="hint" style={{ margin: 0, color: 'var(--danger)' }}>위도는 -90~90, 경도는 -180~180 사이 숫자로 입력</p>
       )}
       <p className="hint" style={{ margin: 0 }}>
-        다른 사람에게는 동 이름과 거리(500m·1km)만 보여요. 공구 목록은 이 좌표에서 반경 안에 있는 글을 보여줘요.
+        다른 사람에게는 동 이름과 거리(500m·1km)만 공개 · 공구 목록은 이 좌표 기준 반경 안의 글 표시
       </p>
       <button type="button" className="btn btn-primary" disabled={busy || !resolved} onClick={submit}>{submitLabel}</button>
     </div>

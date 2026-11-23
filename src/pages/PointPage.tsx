@@ -69,7 +69,7 @@ export default function PointPage() {
         setPending(order);
       }
     } catch (e) {
-      if (isUserCancel(e)) toast.ok('결제를 그만뒀어요. 준비된 주문은 30분 뒤 만료돼요.');
+      if (isUserCancel(e)) toast.ok('결제 취소 · 준비된 주문은 30분 뒤 만료');
       else toast.error(e);
     } finally {
       setBusy(false);
@@ -84,9 +84,9 @@ export default function PointPage() {
       const result = await pointApi.confirmCharge(order.orderId, paymentKey, amountToSend);
       if (replay) {
         // 이미 승인된 주문: 서버는 처음 결과를 그대로 돌려주고 포인트는 더 쌓지 않는다 (BR-24)
-        toast.ok(`이미 충전된 주문이라 다시 충전되지 않았어요. 사용 가능 포인트는 그대로예요.`);
+        toast.ok(`이미 충전된 주문 · 추가 충전 없음, 사용 가능 포인트 변동 없음`);
       } else {
-        toast.ok(`${pt(result.chargedPoint)} 충전됐어요. 사용 가능 포인트 ${pt(result.balanceAfter)}`);
+        toast.ok(`${pt(result.chargedPoint)} 충전 완료 · 사용 가능 포인트 ${pt(result.balanceAfter)}`);
         setLastDone({ order, paymentKey, result });
         // 충전이 끝나면 선택한 금액을 비워서 '충전 후 잔액'과 '사용 가능 포인트'가 같은 값으로 이어지게 한다
         setAmount(0);
@@ -149,10 +149,10 @@ export default function PointPage() {
               {chargeAmount ? `${chargeAmount.toLocaleString()}원 결제하기` : '충전할 금액을 골라 주세요'}
             </button>
             {provider === 'MOCK' && (
-              <p className="hint" style={{ margin: 0 }}>개발 환경이라 실제 돈은 나가지 않아요 (가짜 PG). 결제창에서 성공·실패를 골라 볼 수 있어요.</p>
+              <p className="hint" style={{ margin: 0 }}>개발 환경이라 실제 결제 없음 (가짜 PG) · 결제창에서 성공·실패 선택 가능</p>
             )}
             {provider === 'TOSS' && (
-              <p className="hint" style={{ margin: 0 }}>토스페이먼츠 결제창으로 결제해요. 결제가 끝나면 자동으로 충전돼요.</p>
+              <p className="hint" style={{ margin: 0 }}>토스페이먼츠 결제창으로 결제 · 결제가 끝나면 자동 충전</p>
             )}
           </div>
 
@@ -160,7 +160,7 @@ export default function PointPage() {
             <div className="card stack sm">
               <div className="strong">멱등성 확인 (같은 주문 다시 승인)</div>
               <div className="small muted">주문 {lastDone.order.orderId} · 처음 결과 잔액 {pt(lastDone.result.balanceAfter)}</div>
-              <div className="small muted">같은 주문번호로 승인을 다시 요청해도 포인트가 또 쌓이면 안 돼요.</div>
+              <div className="small muted">같은 주문번호로 승인을 다시 요청해도 포인트 중복 적립 없음</div>
               <button className="btn btn-secondary btn-sm" disabled={busy}
                 onClick={() => confirm(lastDone.order, lastDone.paymentKey)}>같은 주문번호로 한 번 더 승인 요청</button>
             </div>
@@ -181,7 +181,7 @@ export default function PointPage() {
           <div className="table-wrap"><table className="table">
             <thead><tr><th>일시</th><th>유형</th><th>내용</th><th className="num">금액</th><th className="num">잔액</th></tr></thead>
             <tbody>
-              {txs.length === 0 && <tr><td colSpan={5} className="muted" style={{ textAlign: 'center', padding: 32 }}>내역이 없어요</td></tr>}
+              {txs.length === 0 && <tr><td colSpan={5} className="muted" style={{ textAlign: 'center', padding: 32 }}>내역 없음</td></tr>}
               {txs.map((t) => (
                 <tr key={t.transactionId}>
                   <td className="muted tabular">{shortDateTime(t.createdAt)}</td>
@@ -202,8 +202,8 @@ export default function PointPage() {
       </div>
 
       {pending && (
-        <Modal title="결제창 (가짜 PG)" onClose={() => { setPending(null); toast.ok('결제를 그만뒀어요. 준비된 주문은 30분 뒤 만료돼요.'); }}>
-          <div className="notice small">원래는 토스·카카오페이 결제창이 뜨는 자리예요. 결과를 골라 주세요.</div>
+        <Modal title="결제창 (가짜 PG)" onClose={() => { setPending(null); toast.ok('결제 취소 · 준비된 주문은 30분 뒤 만료'); }}>
+          <div className="notice small">가짜 결제창 · 결과 선택</div>
           <div className="stack sm small">
             <div className="row between"><span className="muted">주문번호</span><code>{pending.orderId}</code></div>
             <div className="row between"><span className="muted">상품</span><span>{pending.orderName}</span></div>

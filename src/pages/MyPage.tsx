@@ -86,7 +86,7 @@ export default function MyPage() {
             <Link to="/points" className="my-nav-item"><span>포인트 내역</span><Icon name="right" size={14} /></Link>
             <button type="button" className="my-nav-item" onClick={() => setEditingDong(true)}><span>동네 설정</span><Icon name="right" size={14} /></button>
             <button type="button" className="my-nav-item muted"
-              onClick={async () => { await logout(); toast.ok('로그아웃했어요'); navigate('/login'); }}><span>로그아웃</span></button>
+              onClick={async () => { await logout(); toast.ok('로그아웃 완료'); navigate('/login'); }}><span>로그아웃</span></button>
           </nav>
         </aside>
 

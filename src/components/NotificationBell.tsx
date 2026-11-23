@@ -81,7 +81,7 @@ export default function NotificationBell() {
             <button type="button" className="btn btn-ghost small" disabled={unread === 0} onClick={readAll}>모두 읽음</button>
           </div>
           {items === null ? <div className="small muted" style={{ padding: 16 }}>불러오는 중…</div>
-            : items.length === 0 ? <div className="small muted" style={{ padding: 24, textAlign: 'center' }}>아직 알림이 없어요.<br />공구에 참여하거나 공구를 열면 진행 소식을 알려드려요.</div>
+            : items.length === 0 ? <div className="small muted" style={{ padding: 24, textAlign: 'center' }}>아직 알림 없음<br />공구에 참여하거나 공구를 열면 진행 소식 표시</div>
               : items.map((n) => (
                 <button key={n.notificationId} type="button" className={`noti-item${n.read ? '' : ' is-new'}`} onClick={() => openItem(n)}>
                   <div className="row" style={{ gap: 10, alignItems: 'flex-start' }}>

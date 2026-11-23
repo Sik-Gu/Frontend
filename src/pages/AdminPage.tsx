@@ -44,7 +44,7 @@ export default function AdminPage() {
       <div className="row between">
         <div>
           <h1 style={{ fontSize: 24, margin: 0 }}>관리자 · 신고 관리</h1>
-          <p className="muted" style={{ margin: '4px 0 0' }}>신고 내용을 확인하고 사용자 계정을 정지하거나 정지를 풀 수 있어요.</p>
+          <p className="muted" style={{ margin: '4px 0 0' }}>신고 내용 확인 후 사용자 계정 정지·해제 가능</p>
         </div>
         <span className="small muted">{data ? `${data.totalElements}건` : ''}</span>
       </div>
@@ -56,7 +56,7 @@ export default function AdminPage() {
       </div>
 
       {!data ? <div className="card muted">불러오는 중…</div>
-        : data.content.length === 0 ? <div className="card muted" style={{ textAlign: 'center', padding: 48 }}>신고가 없어요.</div>
+        : data.content.length === 0 ? <div className="card muted" style={{ textAlign: 'center', padding: 48 }}>신고 없음</div>
           : data.content.map((r) => <ReportCard key={r.reportId} report={r} onChanged={load} />)}
 
       {data && <Pagination page={data.page} hasNext={data.hasNext} total={data.totalElements} size={data.size} onChange={setPage} />}
@@ -129,7 +129,7 @@ function UserBox({ title, user, onChanged, highlight }: {
     setBusy(true);
     try {
       await adminApi.changeUserStatus(user.userId, status, untilAfterDays(days));
-      toast.ok(status === 'ACTIVE' ? '정지를 풀었어요' : '계정을 정지했어요. 정지된 사용자는 로그인할 수 없어요.');
+      toast.ok(status === 'ACTIVE' ? '정지 해제됨' : '계정 정지됨 · 해당 사용자 로그인 불가');
       onChanged();
     } catch (e) {
       toast.error(e);
@@ -153,7 +153,7 @@ function UserBox({ title, user, onChanged, highlight }: {
           {user.suspendedUntil ? `${fullDateTime(user.suspendedUntil)}까지 정지` : '무기한 정지'}
         </div>
       )}
-      {user.role === 'ADMIN' ? <div className="small muted">관리자 계정은 상태를 바꿀 수 없어요.</div> : (
+      {user.role === 'ADMIN' ? <div className="small muted">관리자 계정은 상태 변경 불가</div> : (
         <div className="row wrap" style={{ gap: 6 }}>
           {suspended ? (
             <button className="btn btn-secondary btn-sm" disabled={busy} onClick={() => change('ACTIVE')}>정지 해제</button>

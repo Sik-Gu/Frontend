@@ -61,7 +61,7 @@ export default function PostEditPage() {
         title: title.trim(), productName: productName.trim(), productLink: productLink.trim(),
         category, content: content.trim(), imageUrls,
       });
-      toast.ok('공구 내용을 수정했어요');
+      toast.ok('공구 내용 수정 완료');
       navigate(`/posts/${postId}`, { replace: true });
     } catch (err) {
       toast.error(err);
@@ -75,7 +75,7 @@ export default function PostEditPage() {
       <form className="card stack lg" style={{ padding: 40 }} onSubmit={submit}>
         <div>
           <h1 style={{ fontSize: 26, margin: 0 }}>공구 수정</h1>
-          <p className="muted" style={{ margin: '6px 0 0' }}>다른 사람이 참여하기 전까지만 고칠 수 있어요. 가격·단위는 바꿀 수 없어요.</p>
+          <p className="muted" style={{ margin: '6px 0 0' }}>다른 사람이 참여하기 전까지만 수정 가능 · 가격·단위는 변경 불가</p>
         </div>
 
         <div className="field"><label>상품 사진 (최대 10장)</label>

@@ -30,7 +30,7 @@ export default function ChargeResultPage({ result }: { result: 'success' | 'fail
     }
     pointApi.confirmCharge(orderId, paymentKey, amount)
       .then(async (res) => {
-        toast.ok(`${pt(res.chargedPoint)} 충전됐어요. 사용 가능 포인트 ${pt(res.balanceAfter)}`);
+        toast.ok(`${pt(res.chargedPoint)} 충전 완료 · 사용 가능 포인트 ${pt(res.balanceAfter)}`);
         await refresh();
         navigate('/points', { replace: true });
       })
@@ -53,7 +53,7 @@ export default function ChargeResultPage({ result }: { result: 'success' | 'fail
         ) : (
           <>
             <h1 style={{ fontSize: 22, margin: 0 }}>결제를 확인하고 있어요</h1>
-            <p className="muted" style={{ margin: 0 }}>잠시만 기다려 주세요. 창을 닫지 마세요.</p>
+            <p className="muted" style={{ margin: 0 }}>결제 처리 중 · 창 닫지 말 것</p>
           </>
         )}
       </div>
