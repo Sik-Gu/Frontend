@@ -5,7 +5,7 @@ import { tokens } from '../api/client';
 import { chatApi } from '../api/endpoints';
 import type { ChatMessage, ChatRoomDetail, ChatRoomStatus, ChatRoomSummary } from '../api/types';
 import ProfileModal from '../components/ProfileModal';
-import { Avatar, ImageBox, StatusBadge } from '../components/ui';
+import { Avatar, Icon, ImageBox, StatusBadge } from '../components/ui';
 import { ago, clock, won } from '../lib/format';
 import { useSession, useToast } from '../lib/session';
 
@@ -80,7 +80,7 @@ export default function ChatPage() {
             <h2 style={{ fontSize: 20, margin: 0 }}>채팅</h2>
             <div className="row" style={{ gap: 16, marginTop: 10 }}>
               {(['ONGOING', 'CLOSED'] as const).map((s) => (
-                <button key={s} className="btn btn-ghost" style={{ padding: 0, color: tab === s ? '#1a1a1a' : '#808080', fontWeight: tab === s ? 700 : 400 }}
+                <button key={s} className="btn btn-ghost" style={{ padding: 0, color: tab === s ? 'var(--text-strong)' : 'var(--text-muted)', fontWeight: tab === s ? 700 : 400 }}
                   onClick={() => setTab(s)}>{s === 'ONGOING' ? '진행중' : '종료됨'} {rooms[s].length}</button>
               ))}
             </div>
@@ -104,8 +104,8 @@ export default function ChatPage() {
               </Link>
             ))}
           </div>
-          <div className="small muted" style={{ padding: '10px 20px', borderTop: '1px solid #f0f0f0' }}>
-            실시간 연결: {conn === 'connected' ? '🟢 연결됨' : conn === 'connecting' ? '🟡 연결 중…' : '🔴 끊김 (자동 재연결 중)'}
+          <div className="small muted" style={{ padding: '10px 20px', borderTop: '1px solid var(--line)' }}>
+            <span className="conn-dot" style={{ background: conn === 'connected' ? 'var(--ok)' : conn === 'connecting' ? 'var(--text-hint)' : 'var(--danger)' }} />실시간 연결: {conn === 'connected' ? '연결됨' : conn === 'connecting' ? '연결 중…' : '끊김 (자동 재연결 중)'}
           </div>
         </div>
 
@@ -202,8 +202,8 @@ function ChatRoom({ roomId, client, connected, onActivity }: {
 
   return (
     <div className="card chat-room">
-      <div className="row between chat-room-head" style={{ padding: '16px 24px', borderBottom: '1px solid #e6e6e6' }}>
-        <Link to="/chats" className="chat-back" aria-label="채팅 목록으로">←</Link>
+      <div className="row between chat-room-head" style={{ padding: '16px 24px', borderBottom: '1px solid var(--line)' }}>
+        <Link to="/chats" className="chat-back" aria-label="채팅 목록으로"><Icon name="left" size={20} /></Link>
         <div className="grow">
           <div className="strong" style={{ fontSize: 16 }}>{room.name}</div>
           <div className="small muted">참여자 {room.participantCount}명 · {room.participants.map((p, i) => (
@@ -215,7 +215,7 @@ function ChatRoom({ roomId, client, connected, onActivity }: {
         </div>
         <Link to={`/posts/${room.post.postId}`} className="btn btn-secondary btn-sm">공구 게시글 보기</Link>
       </div>
-      <div className="row" style={{ padding: '12px 24px', background: '#fafafa', borderBottom: '1px solid #e6e6e6' }}>
+      <div className="row" style={{ padding: '12px 24px', background: 'var(--bg)', borderBottom: '1px solid var(--surface-muted)' }}>
         <ImageBox src={room.post.thumbnailUrl} label="" style={{ width: 44, height: 44, borderRadius: 6 }} />
         <div className="grow">
           <div className="strong small">{room.post.title}</div>
@@ -251,8 +251,8 @@ function ChatRoom({ roomId, client, connected, onActivity }: {
         })}
       </div>
 
-      <form className="row" style={{ padding: '14px 24px', borderTop: '1px solid #e6e6e6' }} onSubmit={send}>
-        <input className="input" style={{ borderRadius: 999, background: '#f2f2f2', border: 0 }}
+      <form className="row" style={{ padding: '14px 24px', borderTop: '1px solid var(--surface-muted)' }} onSubmit={send}>
+        <input className="input" style={{ borderRadius: 999, background: 'var(--surface-muted)', border: 0 }}
           placeholder={closed ? '종료된 채팅방이에요 (읽기 전용)' : '메시지를 입력하세요'} value={text} maxLength={1000}
           disabled={closed} onChange={(e) => setText(e.target.value)} />
         <button className="btn btn-primary" disabled={closed || !text.trim()}>전송</button>

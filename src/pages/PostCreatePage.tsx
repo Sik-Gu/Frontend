@@ -91,7 +91,7 @@ export default function PostCreatePage() {
           <input className="input" placeholder="예) 생수 같이 사실 분 구해요" value={title} maxLength={50}
             onChange={(e) => setTitle(e.target.value)} /></div>
 
-        <div className="stack" style={{ background: '#f7f7f7', border: '1px solid #e6e6e6', borderRadius: 12, padding: 24 }}>
+        <div className="stack" style={{ background: 'var(--bg)', border: '1px solid var(--surface-muted)', borderRadius: 12, padding: 24 }}>
           <div>
             <div className="section-title" style={{ margin: 0 }}>판매 단위 설정</div>
             <div className="small muted">기본 단위를 정하면 참여자가 단위 기준으로 여러 개 구매할 수 있어요</div>
@@ -127,7 +127,7 @@ export default function PostCreatePage() {
             onChange={(e) => setContent(e.target.value)} /></div>
 
         <div className="field"><label>거래 위치</label>
-          <div className="input muted">📍 {me?.location?.dongName ?? '동네 미설정'} · 내 집 위치 기준으로 근처 이웃에게 보여요 (정확한 좌표는 공개되지 않아요)</div></div>
+          <div className="input muted">{me?.location?.dongName ?? '동네 미설정'} · 내 집 위치 기준으로 근처 이웃에게 보여요 (정확한 좌표는 공개되지 않아요)</div></div>
 
         <div className={`notice${shortage ? ' danger' : ''}`}>
           {Number.isNaN(hostPay)

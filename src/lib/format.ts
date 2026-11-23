@@ -102,6 +102,15 @@ export function isClosingSoon(iso: string, now = Date.now()): boolean {
   return diff > 0 && diff < 24 * 3600 * 1000;
 }
 
+/** 카드 태그용 마감 표시: 오늘 마감 / D-1 (임박) / D-5 / 마감 */
+export function dday(iso: string): { label: string; hot: boolean } {
+  const diff = new Date(iso).getTime() - Date.now();
+  if (diff <= 0) return { label: '마감', hot: false };
+  if (diff < 86400000) return { label: '오늘 마감', hot: true };
+  const days = Math.ceil(diff / 86400000);
+  return { label: `D-${days}`, hot: days <= 1 };
+}
+
 /** datetime-local 입력값(로컬 시각) → 백엔드 LocalDateTime 문자열 */
 export function toLocalDateTime(value: string): string {
   return value.length === 16 ? `${value}:00` : value;

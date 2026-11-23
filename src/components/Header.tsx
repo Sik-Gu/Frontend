@@ -3,7 +3,7 @@ import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 import { pt } from '../lib/format';
 import { useSession } from '../lib/session';
 import NotificationBell from './NotificationBell';
-import { Avatar } from './ui';
+import { Avatar, Icon } from './ui';
 
 export default function Header() {
   const { me, logout } = useSession();
@@ -14,7 +14,10 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header-inner">
-        <Link to="/" className="logo">Sik-Gu</Link>
+        <Link to="/" className="logo" aria-label="Sik-Gu 홈">
+          <img src="/logo-mark.png" alt="" className="logo-mark" />
+          <img src="/logo-wordmark.png" alt="" className="logo-word" />
+        </Link>
         {me?.role === 'ADMIN' && (
           <>
             <nav className="nav"><NavLink to="/admin">신고 관리</NavLink></nav>
@@ -38,11 +41,16 @@ export default function Header() {
               e.preventDefault();
               navigate(keyword.trim() ? `/?keyword=${encodeURIComponent(keyword.trim())}` : '/');
             }}>
-              <input className="search" placeholder="공구 검색 (단어 또는 초성)" value={keyword}
-                onChange={(e) => setKeyword(e.target.value)} aria-label="공구 검색" />
+              <label className="search">
+                <Icon name="search" />
+                <input placeholder="생수, 휴지, ㄹㅁ(초성)…" value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)} aria-label="공구 검색" />
+              </label>
             </form>
             <Link to="/points" className="point-chip tabular" title="사용 가능 포인트">{pt(me.point.availableBalance)}</Link>
-            <Link to="/posts/new" className="btn btn-primary btn-sm">+ 공구 열기</Link>
+            <Link to="/posts/new" className="btn btn-primary" style={{ height: 44, padding: '0 20px', fontSize: 16 }}>
+              <Icon name="plus" />공구 열기
+            </Link>
             <NotificationBell />
             <Link to="/me" title={me.nickname}><Avatar name={me.nickname} /></Link>
           </div>

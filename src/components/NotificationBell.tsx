@@ -1,16 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { notificationApi } from '../api/endpoints';
-import type { NotificationItem, NotificationType } from '../api/types';
+import type { NotificationItem } from '../api/types';
 import { ago } from '../lib/format';
 import { useToast } from '../lib/session';
+import { Icon } from './ui';
 
 const POLL_MS = 30000;
-
-const ICON: Record<NotificationType, string> = {
-  JOINED: '🙋', UNITS_ADDED: '➕', LEFT: '🚪', RECRUITED: '🎉', PLACE_PROPOSED: '📍', PLACE_ALL_AGREED: '✅',
-  ORDERED: '🧾', SHIPPED: '🚚', DISTRIBUTION_SCHEDULED: '📅', SETTLED: '💰', CANCELLED: '⚠️', EXPIRED: '⌛',
-};
 
 /** 헤더 종 아이콘: 안 읽은 알림 수(30초마다 확인) + 눌러서 알림 목록 */
 export default function NotificationBell() {
@@ -76,11 +72,11 @@ export default function NotificationBell() {
   return (
     <div ref={box} style={{ position: 'relative' }}>
       <button type="button" className="bell" aria-label={`알림 ${unread}개`} onClick={() => setOpen(!open)}>
-        🔔{unread > 0 && <span className="bell-count">{unread > 99 ? '99+' : unread}</span>}
+        <Icon name="bell" size={22} />{unread > 0 && <span className="bell-count">{unread > 99 ? '99+' : unread}</span>}
       </button>
       {open && (
         <div className="noti-panel">
-          <div className="row between" style={{ padding: '12px 16px', borderBottom: '1px solid #e6e6e6' }}>
+          <div className="row between" style={{ padding: '12px 16px', borderBottom: '1px solid var(--surface-muted)' }}>
             <span className="strong">알림</span>
             <button type="button" className="btn btn-ghost small" disabled={unread === 0} onClick={readAll}>모두 읽음</button>
           </div>
@@ -89,12 +85,11 @@ export default function NotificationBell() {
               : items.map((n) => (
                 <button key={n.notificationId} type="button" className={`noti-item${n.read ? '' : ' is-new'}`} onClick={() => openItem(n)}>
                   <div className="row" style={{ gap: 10, alignItems: 'flex-start' }}>
-                    <span style={{ fontSize: 18 }}>{ICON[n.type] ?? '🔔'}</span>
                     <div className="grow">
                       <div className="small noti-msg">{n.message}</div>
                       <div className="small muted">{ago(n.createdAt)}</div>
                     </div>
-                    {!n.read && <span style={{ width: 7, height: 7, borderRadius: 99, background: '#c62828', marginTop: 6 }} />}
+                    {!n.read && <span style={{ width: 7, height: 7, borderRadius: 99, background: 'var(--danger)', marginTop: 6 }} />}
                   </div>
                 </button>
               ))}

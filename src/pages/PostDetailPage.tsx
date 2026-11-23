@@ -5,7 +5,7 @@ import { postApi } from '../api/endpoints';
 import type { OrderDetail, ParticipationRole, ParticipationStatusResponse, PaymentStatus, PostDetail, PostStatus, ReviewTag, ReviewTargetsResponse } from '../api/types';
 import ProfileModal from '../components/ProfileModal';
 import { canEditPost } from './PostEditPage';
-import { Avatar, ImageBox, ImageUploader, Modal, Progress, StatusBadge } from '../components/ui';
+import { Avatar, Icon, ImageBox, ImageUploader, Modal, Progress, StatusBadge } from '../components/ui';
 import {
   CATEGORY_LABEL, DISTANCE_LABEL, fullDateTime, pt, RECEIPT_LABEL, remaining, STATUS_LABEL, STATUS_STEPS,
   TAG_LABEL, toLocalDateTime, won,
@@ -79,7 +79,7 @@ export default function PostDetailPage() {
   return (
     <div className="page stack lg">
       <div className="small muted">
-        <Link to="/">홈</Link> › {CATEGORY_LABEL[post.category]} › {post.title}
+        <Link to="/">홈</Link><Icon name="right" size={12} />{CATEGORY_LABEL[post.category]}<Icon name="right" size={12} />{post.title}
       </div>
 
       {/* 진행 상태 */}
@@ -96,7 +96,7 @@ export default function PostDetailPage() {
               const current = STATUS_STEPS.indexOf(post.status);
               return (
                 <div key={s} className={`step${i < current ? ' done' : ''}${i === current ? ' current' : ''}`}>
-                  <span className="dot">{i < current ? '✓' : i + 1}</span>{STATUS_LABEL[s]}
+                  <span className="dot">{i < current ? <Icon name="check" size={14} label="완료" /> : i + 1}</span>{STATUS_LABEL[s]}
                 </div>
               );
             })}
@@ -112,7 +112,7 @@ export default function PostDetailPage() {
             {post.imageUrls.length > 1 && (
               <div className="row" style={{ gap: 10 }}>
                 {post.imageUrls.map((u, i) => (
-                  <button key={u} onClick={() => setImageIndex(i)} style={{ border: i === imageIndex ? '2px solid #333' : '1px solid #e6e6e6', padding: 0, borderRadius: 8, cursor: 'pointer', background: 'none' }}>
+                  <button key={u} onClick={() => setImageIndex(i)} style={{ border: i === imageIndex ? '2px solid var(--primary)' : '1px solid var(--surface-muted)', padding: 0, borderRadius: 8, cursor: 'pointer', background: 'none' }}>
                     <ImageBox src={u} style={{ width: 96, height: 70, borderRadius: 7 }} />
                   </button>
                 ))}
@@ -126,8 +126,8 @@ export default function PostDetailPage() {
             <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{post.content || '내용이 없어요.'}</p>
             {post.productLink && (
               <a className="notice row between" href={post.productLink} target="_blank" rel="noreferrer">
-                <span>🔗 {post.productLink.length > 50 ? `${post.productLink.slice(0, 50)}…` : post.productLink}</span>
-                <span className="strong">상품 링크 열기 ↗</span>
+                <span className="row" style={{ gap: 6, minWidth: 0 }}><Icon name="link" />{post.productLink.length > 50 ? `${post.productLink.slice(0, 50)}…` : post.productLink}</span>
+                <span className="strong row" style={{ gap: 4 }}>상품 링크 열기<Icon name="external" size={14} /></span>
               </a>
             )}
             <hr className="divider" />
@@ -167,7 +167,7 @@ export default function PostDetailPage() {
             <div className="row between" style={{ alignItems: 'flex-start' }}>
               <h1 style={{ fontSize: 24, margin: 0 }}>{post.title}</h1>
               {canEditPost(post, me.userId) && (
-                <Link to={`/posts/${post.postId}/edit`} className="btn btn-secondary btn-sm" style={{ flexShrink: 0 }}>✏️ 수정</Link>
+                <Link to={`/posts/${post.postId}/edit`} className="btn btn-secondary btn-sm" style={{ flexShrink: 0 }}>수정</Link>
               )}
             </div>
             <div style={{ fontSize: 26, fontWeight: 700 }}>1단위 {won(post.unitPrice)}</div>
@@ -176,18 +176,18 @@ export default function PostDetailPage() {
             <div className="row between small"><span className="muted">위치</span>
               <span>{post.dongName}{post.distance ? ` · ${DISTANCE_LABEL[post.distance]}` : ''}</span></div>
             <div className="row between small"><span className="muted">등록일</span><span>{fullDateTime(post.createdAt)}</span></div>
-            <div className="row between small"><span className="muted">조회수</span><span className="tabular">👁 {post.viewCount.toLocaleString('ko-KR')}</span></div>
+            <div className="row between small"><span className="muted">조회수</span><span className="tabular">{post.viewCount.toLocaleString('ko-KR')}</span></div>
             <div className="row between small"><span className="muted">모집 마감</span>
               <span>{fullDateTime(post.deadlineAt)} {post.status === 'RECRUITING' ? `(${remaining(post.deadlineAt)})` : ''}</span></div>
             <Progress value={post.filledUnits} max={post.totalUnits} />
             <div className="small strong">{post.filledUnits} / {post.totalUnits}단위 · {post.participantCount}명 참여 · {remainingUnits}단위 남음</div>
-            <div className="row" style={{ background: '#f7f7f7', borderRadius: 8, padding: 12 }}>
+            <div className="row" style={{ background: 'var(--surface-muted)', borderRadius: 8, padding: 12 }}>
               <button type="button" className="link-button" title="프로필 보기"
                 onClick={() => setProfileOf({ userId: post.host.userId, role: 'HOST' })}><Avatar name={post.host.nickname} /></button>
               <div className="grow">
                 <button type="button" className="link-button strong" title="프로필 보기"
                   onClick={() => setProfileOf({ userId: post.host.userId, role: 'HOST' })}>{post.host.nickname}{isHost ? ' (나)' : ''}</button>
-                <div className="small muted">★ {post.host.rating ?? '-'} · 거래 {post.host.tradeCount}회
+                <div className="small muted">평점 {post.host.rating ?? '-'} · 거래 {post.host.tradeCount}회
                   {post.host.mainCategories.length > 0 ? ` · 주로 ${post.host.mainCategories.map((c) => CATEGORY_LABEL[c]).join('·')}` : ''}</div>
               </div>
               <span className="badge muted">HOST</span>
@@ -220,7 +220,7 @@ function ParticipantsCard({ post, status, onProfile }: {
         {status.participants.map((p) => {
           const agreed = post.participants?.find((x) => x.userId === p.userId)?.placeAgreed;
           return (
-            <div key={p.userId} className="row" style={{ padding: '6px 0', borderBottom: '1px solid #f0f0f0' }}>
+            <div key={p.userId} className="row" style={{ padding: '6px 0', borderBottom: '1px solid var(--line)' }}>
               <button type="button" className="link-button" title="프로필 보기" onClick={() => onProfile(p.userId, p.role)}><Avatar name={p.nickname} /></button>
               <div className="grow">
                 <div className="row" style={{ gap: 6 }}>
@@ -230,7 +230,7 @@ function ParticipantsCard({ post, status, onProfile }: {
                 <div className="small muted">
                   {pt(p.paidPoint)} {payLabel(p.paymentStatus, post.status)} · {RECEIPT_LABEL[p.receiptStatus]}
                   {post.distributionPlace?.name && ['RECRUITING', 'RECRUITED'].includes(post.status)
-                    ? ` · 장소 ${agreed ? '동의 ✓' : '대기'}` : ''}
+                    ? ` · 장소 ${agreed ? '동의함' : '대기'}` : ''}
                 </div>
               </div>
               <span className="strong">{p.units}단위</span>
@@ -248,7 +248,7 @@ function ParticipantsCard({ post, status, onProfile }: {
           <button type="button" className="link-button" title="프로필 보기" onClick={() => onProfile(p.userId, p.role)}><Avatar name={p.nickname} /></button>
           <div className="grow">
             <div className="row" style={{ gap: 6 }}><button type="button" className="link-button strong" title="프로필 보기" onClick={() => onProfile(p.userId, p.role)}>{p.nickname}</button>{p.role === 'HOST' && <span className="badge muted">HOST</span>}</div>
-            <div className="small muted">★ {p.rating ?? '신규'} · 거래 {p.tradeCount}회</div>
+            <div className="small muted">평점 {p.rating ?? '신규'} · 거래 {p.tradeCount}회</div>
           </div>
           <span className="strong">{p.units}단위</span>
         </div>
@@ -297,10 +297,10 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
       const price = post.unitPrice * units;
       blocks.push(
         <div key="join" className="stack">
-          <div className="stack sm" style={{ background: '#f7f7f7', borderRadius: 10, padding: 16 }}>
+          <div className="stack sm" style={{ background: 'var(--bg)', borderRadius: 10, padding: 16 }}>
             <div className="row between">
               <span className="strong">구매 수량</span>
-              <div className="row" style={{ gap: 0, border: '1px solid #ccc', borderRadius: 8, background: '#fff' }}>
+              <div className="row" style={{ gap: 0, border: '1px solid var(--line-strong)', borderRadius: 8, background: '#fff' }}>
                 <button className="btn btn-ghost" disabled={units <= 1} onClick={() => setUnits(units - 1)}>−</button>
                 <span className="strong tabular" style={{ width: 32, textAlign: 'center' }}>{units}</span>
                 <button className="btn btn-ghost" disabled={units >= max} onClick={() => setUnits(units + 1)}>+</button>
@@ -331,7 +331,7 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
   // ----- 참여 중 공통 -----
   if (isMember && post.me) {
     blocks.push(
-      <div key="mine" className="row between" style={{ background: '#f7f7f7', borderRadius: 10, padding: 14 }}>
+      <div key="mine" className="row between" style={{ background: 'var(--bg)', borderRadius: 10, padding: 14 }}>
         <span>내 몫 <b>{post.me.units}단위</b> · {pt(post.unitPrice * post.me.units)} {payLabel(post.me.paymentStatus, post.status)}</span>
         <span className="badge outline">{RECEIPT_LABEL[post.me.receiptStatus]}</span>
       </div>,
@@ -342,10 +342,10 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
       const addCount = Math.min(moreUnits, left);
       const addPrice = post.unitPrice * addCount;
       blocks.push(
-        <div key="more" className="stack sm" style={{ border: '1px solid #e6e6e6', borderRadius: 10, padding: 14 }}>
+        <div key="more" className="stack sm" style={{ border: '1px solid var(--surface-muted)', borderRadius: 10, padding: 14 }}>
           <div className="row between">
             <span className="strong">수량 추가</span>
-            <div className="row" style={{ gap: 0, border: '1px solid #ccc', borderRadius: 8, background: '#fff' }}>
+            <div className="row" style={{ gap: 0, border: '1px solid var(--line-strong)', borderRadius: 8, background: '#fff' }}>
               <button className="btn btn-ghost" disabled={addCount <= 1} onClick={() => setMoreUnits(addCount - 1)}>−</button>
               <span className="strong tabular" style={{ width: 32, textAlign: 'center' }}>{addCount}</span>
               <button className="btn btn-ghost" disabled={addCount >= left} onClick={() => setMoreUnits(addCount + 1)}>+</button>
@@ -366,7 +366,7 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
       );
     }
     if (post.chatRoomId) {
-      blocks.push(<Link key="chat" to={`/chats/${post.chatRoomId}`} className="btn btn-secondary btn-block">💬 채팅방 가기</Link>);
+      blocks.push(<Link key="chat" to={`/chats/${post.chatRoomId}`} className="btn btn-secondary btn-block"><Icon name="chat" />채팅방 가기</Link>);
     }
   }
 
@@ -381,15 +381,15 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
             <button className="btn btn-secondary" disabled={!placeName.trim()}
               onClick={() => act(() => postApi.proposePlace(id, placeName.trim()), '나눔 장소를 제안했어요. 참여자 동의를 기다려요.')}>제안</button>
           </div>
-          {place?.name && <div className="small muted">현재 ‘{place.name}’ · 동의 {place.agreedCount}/{place.memberCount}{place.allAgreed ? ' · 모두 동의 ✓' : ''}</div>}
+          {place?.name && <div className="small muted">현재 ‘{place.name}’ · 동의 {place.agreedCount}/{place.memberCount}{place.allAgreed ? ' · 모두 동의' : ''}</div>}
         </div>,
       );
     } else if (place?.name) {
       blocks.push(
-        <div key="agree" className="stack sm" style={{ border: '1px solid #e6e6e6', borderRadius: 10, padding: 14 }}>
+        <div key="agree" className="stack sm" style={{ border: '1px solid var(--surface-muted)', borderRadius: 10, padding: 14 }}>
           <div>호스트가 제안한 나눔 장소: <b>{place.name}</b></div>
           <div className="small muted">동의 {place.agreedCount}/{place.memberCount}</div>
-          {place.myAgreed ? <div className="small strong">동의했어요 ✓</div> : (
+          {place.myAgreed ? <div className="small strong">동의했어요</div> : (
             <div className="row">
               <button className="btn btn-primary grow" onClick={() => act(() => postApi.agreePlace(id), '나눔 장소에 동의했어요')}>동의</button>
               <button className="btn btn-danger" onClick={() => setConfirming('disagree')}>의견이 달라 나가기</button>
@@ -405,7 +405,7 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
     const canOrder = place?.allAgreed;
     blocks.push(
       <div key="order" className="stack sm">
-        <div className="strong">영수증 등록 → 주문 완료</div>
+        <div className="strong">영수증 등록하고 주문 완료하기</div>
         {!canOrder && <div className="small muted">나눔 장소를 제안하고 참여자 모두 동의해야 주문할 수 있어요.</div>}
         <ImageUploader type="RECEIPT" urls={receipts} onChange={setReceipts} max={5} label="+ 영수증" />
         <button className="btn btn-primary btn-block" disabled={!canOrder || receipts.length === 0}
@@ -446,7 +446,7 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
       <button key="receive" className="btn btn-primary btn-block"
         onClick={() => act(() => postApi.confirmReceipt(id), (r) => (r as { postStatus: string }).postStatus === 'SETTLED'
           ? '모두 받았어요! 정산이 끝나 호스트에게 포인트가 전달됐어요.' : '받았어요! 다른 참여자를 기다려요.')}>
-        받았어요 ✓
+        받았어요
       </button>,
     );
   }
@@ -527,13 +527,13 @@ function ReviewCard({ data, postId, onDone }: { data: ReviewTargetsResponse; pos
     <div className="card stack">
       <div className="section-title" style={{ margin: 0 }}>후기 남기기 <span className="small muted">~{fullDateTime(data.writableUntil)}</span></div>
       {pending.map((t) => (
-        <div key={t.userId} className="stack sm" style={{ borderBottom: '1px solid #f0f0f0', paddingBottom: 12 }}>
+        <div key={t.userId} className="stack sm" style={{ borderBottom: '1px solid var(--line)', paddingBottom: 12 }}>
           <div className="row"><Avatar name={t.nickname} size="sm" /><span className="strong">{t.nickname}</span>
             {t.role === 'HOST' && <span className="badge muted">HOST</span>}</div>
           <div className="row" style={{ gap: 4 }}>
             {[1, 2, 3, 4, 5].map((n) => (
-              <button key={n} className="btn btn-ghost" style={{ fontSize: 22, padding: '0 2px', color: (ratings[t.userId] ?? 0) >= n ? '#333' : '#ccc' }}
-                onClick={() => setRatings({ ...ratings, [t.userId]: n })} aria-label={`${n}점`}>★</button>
+              <button key={n} className="btn btn-ghost" style={{ fontSize: 22, padding: '0 2px', color: (ratings[t.userId] ?? 0) >= n ? 'var(--accent)' : 'var(--line-strong)' }}
+                onClick={() => setRatings({ ...ratings, [t.userId]: n })} aria-label={`${n}점`}><Icon name="star" size={24} filled /></button>
             ))}
           </div>
           <div className="row wrap" style={{ gap: 6 }}>

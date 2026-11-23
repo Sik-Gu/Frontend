@@ -167,7 +167,7 @@ function SignupCard() {
               <input id="su-code" className="input" inputMode="numeric" maxLength={6} placeholder="메일로 받은 6자리 코드"
                 value={code} disabled={!sentTo || step !== 1} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} /></div>
             <button type="button" className="btn btn-secondary" disabled={busy || step !== 1 || code.length !== 6} onClick={verify}>
-              {token ? '인증 완료 ✓' : '확인'}
+              {token ? '인증 완료' : '확인'}
             </button>
           </div>
 
