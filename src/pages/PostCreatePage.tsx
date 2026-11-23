@@ -76,7 +76,7 @@ export default function PostCreatePage() {
         <div className="field"><label>상품 사진 (최대 10장)</label>
           <ImageUploader type="POST" urls={imageUrls} onChange={setImageUrls} max={10} /></div>
 
-        <div className="row" style={{ gap: 12, alignItems: 'flex-start' }}>
+        <div className="row split" style={{ gap: 12, alignItems: 'flex-start' }}>
           <div className="field grow"><label>상품명</label>
             <input className="input" placeholder="예) 코스트코 생수 2L x 24" value={productName} maxLength={100}
               onChange={(e) => setProductName(e.target.value)} /></div>
@@ -96,7 +96,7 @@ export default function PostCreatePage() {
             <div className="section-title" style={{ margin: 0 }}>판매 단위 설정</div>
             <div className="small muted">기본 단위를 정하면 참여자가 단위 기준으로 여러 개 구매할 수 있어요</div>
           </div>
-          <div className="row" style={{ gap: 12, alignItems: 'flex-start' }}>
+          <div className="row split" style={{ gap: 12, alignItems: 'flex-start' }}>
             <div className="field grow"><label>기본 단위</label>
               <input className="input" placeholder="예) 2L 생수 4병" value={baseUnit} maxLength={30} onChange={(e) => setBaseUnit(e.target.value)} /></div>
             <div className="field grow"><label>총 단위 수</label>
@@ -104,7 +104,7 @@ export default function PostCreatePage() {
             <div className="field grow"><label>총 상품 가격 (원)</label>
               <input className="input" inputMode="numeric" placeholder="29040" value={totalPrice} onChange={(e) => setTotalPrice(e.target.value.replace(/\D/g, ''))} /></div>
           </div>
-          <div className="row" style={{ gap: 12, alignItems: 'flex-start' }}>
+          <div className="row split" style={{ gap: 12, alignItems: 'flex-start' }}>
             <div className="field grow"><label>단위당 가격 (자동 계산)</label>
               <input className="input" disabled value={divisible ? won(unitPrice) : ''} placeholder="4,840원" /></div>
             <div className="field grow"><label>내가 구매할 수량 (호스트)</label>

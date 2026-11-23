@@ -46,7 +46,7 @@ export default function HomePage() {
 
   return (
     <div className="page">
-      <div className="row" style={{ alignItems: 'flex-start', gap: 32 }}>
+      <div className="row split" style={{ alignItems: 'flex-start', gap: 32 }}>
         <aside className="stack" style={{ width: 240, flexShrink: 0, gap: 24 }}>
           <div className="stack sm">
             <div className="section-title" style={{ margin: 0 }}>우리 동네</div>
@@ -55,7 +55,7 @@ export default function HomePage() {
             </button>
           </div>
 
-          <div className="stack sm">
+          <div className="stack sm cat-list">
             <div className="section-title" style={{ margin: 0 }}>카테고리</div>
             {[undefined, ...CATEGORIES].map((c) => (
               <button key={c ?? 'ALL'} className="btn btn-ghost" onClick={() => setCategory(c)}

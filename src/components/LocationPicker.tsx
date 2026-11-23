@@ -47,7 +47,7 @@ export default function LocationPicker({ onDone, submitLabel = '이 동네로 �
           </button>
         ))}
       </div>
-      <div className="row" style={{ gap: 8, alignItems: 'flex-end' }}>
+      <div className="row split" style={{ gap: 8, alignItems: 'flex-end' }}>
         <div className="field grow"><label>동 이름</label>
           <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="예) 흑석동" /></div>
         <div className="field" style={{ width: 130 }}><label>위도</label>

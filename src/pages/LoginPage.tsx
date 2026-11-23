@@ -11,7 +11,7 @@ const PASSWORD_RULE = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,20}$/;
 export default function LoginPage() {
   return (
     <div className="page">
-      <div className="row" style={{ gap: 40, alignItems: 'flex-start', justifyContent: 'center', paddingTop: 28 }}>
+      <div className="row split" style={{ gap: 40, alignItems: 'flex-start', justifyContent: 'center', paddingTop: 28 }}>
         <LoginCard />
         <SignupCard />
       </div>
@@ -161,7 +161,7 @@ function SignupCard() {
             </button>
           </div>
 
-          <div className="row" style={{ gap: 12, alignItems: 'flex-start' }}>
+          <div className="row split" style={{ gap: 12, alignItems: 'flex-start' }}>
             <div className="field grow"><label htmlFor="su-pw">비밀번호</label>
               <input id="su-pw" className="input" type="password" placeholder="영문·숫자·특수문자 8~20자" value={password}
                 disabled={step !== 2} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" /></div>

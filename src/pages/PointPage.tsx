@@ -92,7 +92,7 @@ export default function PointPage() {
 
   return (
     <div className="page">
-      <div className="row" style={{ alignItems: 'flex-start', gap: 24 }}>
+      <div className="row split" style={{ alignItems: 'flex-start', gap: 24 }}>
         <div className="stack" style={{ width: 420, flexShrink: 0, gap: 24 }}>
           <div className="card" style={{ background: '#333', color: '#fff', borderColor: '#333' }}>
             <div className="small" style={{ opacity: .75 }}>사용 가능 포인트</div>
@@ -162,7 +162,7 @@ export default function PointPage() {
               ))}
             </div>
           </div>
-          <table className="table">
+          <div className="table-wrap"><table className="table">
             <thead><tr><th>일시</th><th>유형</th><th>내용</th><th className="num">금액</th><th className="num">잔액</th></tr></thead>
             <tbody>
               {txs.length === 0 && <tr><td colSpan={5} className="muted" style={{ textAlign: 'center', padding: 32 }}>내역이 없어요</td></tr>}
@@ -176,7 +176,7 @@ export default function PointPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
           {hasNext && (
             <div style={{ textAlign: 'center', padding: 12 }}>
               <button className="btn btn-ghost small" onClick={() => loadTxs(filter, page + 1)}>더보기 ▾</button>

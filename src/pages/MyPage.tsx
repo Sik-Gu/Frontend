@@ -45,7 +45,7 @@ export default function MyPage() {
 
   return (
     <div className="page">
-      <div className="row" style={{ alignItems: 'flex-start', gap: 24 }}>
+      <div className="row split" style={{ alignItems: 'flex-start', gap: 24 }}>
         <div className="card stack" style={{ width: 280, flexShrink: 0 }}>
           <Avatar name={me.nickname} size="lg" />
           <div>

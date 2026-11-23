@@ -101,7 +101,7 @@ export default function PostDetailPage() {
         )}
       </div>
 
-      <div className="row" style={{ alignItems: 'flex-start', gap: 28 }}>
+      <div className="row split" style={{ alignItems: 'flex-start', gap: 28 }}>
         {/* 왼쪽 */}
         <div className="grow stack lg">
           <div className="stack sm">

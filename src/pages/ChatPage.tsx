@@ -10,6 +10,20 @@ import { useSession, useToast } from '../lib/session';
 
 type Conn = 'connecting' | 'connected' | 'disconnected';
 
+const MOBILE_QUERY = '(max-width: 720px)';
+
+/** 폰 화면이면 true (화면 크기가 바뀌면 따라 바뀐다) */
+function useIsMobile() {
+  const [mobile, setMobile] = useState(() => window.matchMedia(MOBILE_QUERY).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_QUERY);
+    const onChange = () => setMobile(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  return mobile;
+}
+
 /** 05 채팅 */
 export default function ChatPage() {
   const { roomId: roomParam } = useParams();
@@ -20,6 +34,7 @@ export default function ChatPage() {
   const [rooms, setRooms] = useState<Record<ChatRoomStatus, ChatRoomSummary[]>>({ ONGOING: [], CLOSED: [] });
   const [client, setClient] = useState<Client | null>(null);
   const [conn, setConn] = useState<Conn>('connecting');
+  const mobile = useIsMobile();
 
   const loadRooms = useCallback(async () => {
     try {
@@ -48,16 +63,17 @@ export default function ChatPage() {
     return () => { c.deactivate(); };
   }, [toast]);
 
-  // 주소에 방 번호가 없으면 첫 방을 연다
+  // 주소에 방 번호가 없으면 첫 방을 연다 (폰에서는 카톡처럼 목록부터 보여준다)
   useEffect(() => {
+    if (mobile) return;
     if (roomId === null && rooms.ONGOING.length > 0) navigate(`/chats/${rooms.ONGOING[0].chatRoomId}`, { replace: true });
-  }, [roomId, rooms.ONGOING, navigate]);
+  }, [mobile, roomId, rooms.ONGOING, navigate]);
 
   const list = rooms[tab];
 
   return (
     <div className="page" style={{ paddingBottom: 28 }}>
-      <div className="chat-layout">
+      <div className={`chat-layout ${roomId !== null ? 'has-room' : 'no-room'}`}>
         <div className="card chat-list">
           <div style={{ padding: '20px 20px 12px' }}>
             <h2 style={{ fontSize: 20, margin: 0 }}>채팅</h2>
@@ -184,8 +200,9 @@ function ChatRoom({ roomId, client, connected, onActivity }: {
 
   return (
     <div className="card chat-room">
-      <div className="row between" style={{ padding: '16px 24px', borderBottom: '1px solid #e6e6e6' }}>
-        <div>
+      <div className="row between chat-room-head" style={{ padding: '16px 24px', borderBottom: '1px solid #e6e6e6' }}>
+        <Link to="/chats" className="chat-back" aria-label="채팅 목록으로">←</Link>
+        <div className="grow">
           <div className="strong" style={{ fontSize: 16 }}>{room.name}</div>
           <div className="small muted">참여자 {room.participantCount}명 · {room.participants.map((p) => p.nickname + (p.role === 'HOST' ? '(호스트)' : '')).join(', ')}</div>
         </div>
