@@ -390,3 +390,25 @@ svg.icon { flex-shrink: 0; }
   .list-head h2 { font-size: 22px; }
 }
 .bell { color: var(--text-strong); display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; }
+
+/* 00 랜딩 (로그인 전 /) — 로고 마크가 오른쪽에 크게 걸쳐서 천천히 돈다 */
+.landing { position: relative; overflow: hidden; min-height: 100dvh; background: var(--bg); color: var(--text-strong);
+  display: flex; flex-direction: column; padding: 32px 72px; }
+.landing-mark { position: absolute; width: 820px; height: 820px; right: -200px; top: 50%; margin-top: -410px;
+  animation: landing-spin 20s linear infinite; pointer-events: none; user-select: none; }
+.landing-header { position: relative; display: flex; align-items: center; }
+.landing-wordmark { width: 120px; height: auto; }
+.landing-hero { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 28px; max-width: 560px; }
+.landing-title { margin: 0; font-size: 68px; font-weight: 900; line-height: 1.15; letter-spacing: -2.5px; }
+.landing-accent { color: var(--accent); }
+.landing-start { align-self: flex-start; background: var(--accent); color: #fff; font-weight: 700; font-size: 16px;
+  padding: 16px 44px; border-radius: var(--radius-pill); transition: background .15s; }
+.landing-start:hover { background: var(--accent-hover); }
+@keyframes landing-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .landing-mark { animation: none; } }
+@media (max-width: 720px) {
+  .landing { padding: 20px 20px 40px; }
+  .landing-mark { width: 420px; height: 420px; right: -140px; top: 72px; margin-top: 0; opacity: .25; }
+  .landing-title { font-size: 40px; letter-spacing: -1.5px; }
+  .landing-start { align-self: stretch; text-align: center; }
+}

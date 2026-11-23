@@ -6,6 +6,7 @@ import AdminPage from './pages/AdminPage';
 import ChargeResultPage from './pages/ChargeResultPage';
 import ChatPage from './pages/ChatPage';
 import HomePage from './pages/HomePage';
+import LandingPage from './pages/LandingPage';
 import LoginPage, { SignupPage } from './pages/LoginPage';
 import MyPage from './pages/MyPage';
 import PointPage from './pages/PointPage';
@@ -51,6 +52,14 @@ function SetupLocationPage() {
   );
 }
 
+/** / 주소: 로그인 안 했으면 랜딩, 했으면 홈 */
+function HomeOrLanding() {
+  const { me, loading } = useSession();
+  if (loading) return null;
+  if (!me) return <LandingPage />;
+  return <Protected><HomePage /></Protected>;
+}
+
 /** 로그인·회원가입 화면: 이미 로그인했으면 홈으로 */
 function GuestOnly({ children }: { children: ReactNode }) {
   const { me, loading } = useSession();
@@ -70,7 +79,7 @@ export default function App() {
             <Route path="/password/reset" element={<GuestOnly><PasswordResetPage /></GuestOnly>} />
             <Route path="/setup-location" element={<SetupLocationPage />} />
             <Route path="/admin" element={<AdminOnly><AdminPage /></AdminOnly>} />
-            <Route path="/" element={<Protected><HomePage /></Protected>} />
+            <Route path="/" element={<HomeOrLanding />} />
             <Route path="/posts/new" element={<Protected><PostCreatePage /></Protected>} />
             <Route path="/posts/:postId" element={<Protected><PostDetailPage /></Protected>} />
             <Route path="/posts/:postId/edit" element={<Protected><PostEditPage /></Protected>} />

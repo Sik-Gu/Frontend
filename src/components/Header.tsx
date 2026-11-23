@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { pt } from '../lib/format';
 import { useSession } from '../lib/session';
 import NotificationBell from './NotificationBell';
@@ -10,13 +10,17 @@ export default function Header() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const [keyword, setKeyword] = useState(params.get('keyword') ?? '');
+  const { pathname } = useLocation();
+
+  // 로그인 전 랜딩(/)은 자체 헤더를 쓰므로 공통 헤더를 숨긴다
+  if (!me && pathname === '/') return null;
 
   return (
     <header className="header">
       <div className="header-inner">
         <Link to="/" className="logo" aria-label="Sik-Gu 홈">
-          <img src="/logo-mark.png" alt="" className="logo-mark" />
-          <img src="/logo-wordmark.png" alt="" className="logo-word" />
+          <img src="/logo-mark.svg" alt="" className="logo-mark" />
+          <img src="/logo-wordmark.svg" alt="" className="logo-word" />
         </Link>
         {me?.role === 'ADMIN' && (
           <>
