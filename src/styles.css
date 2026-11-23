@@ -90,7 +90,7 @@ svg.icon { flex-shrink: 0; }
 .my-ellipsis { display: flex; align-items: center; gap: 4px; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .my-meta { display: flex; flex-direction: column; gap: 6px; color: var(--text-muted); }
 .my-meta > div { display: flex; align-items: center; gap: 6px; }
-.my-stats { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--surface-muted); border-radius: var(--radius-sm); padding: 12px 4px; }
+.my-stats { display: grid; grid-template-columns: repeat(3, 1fr); padding: 4px 0; }
 .my-stats > * { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
 .my-stats > * + * { border-left: 1px solid var(--line-strong); }
 .my-stats b { font-size: 16px; color: var(--text-strong); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
