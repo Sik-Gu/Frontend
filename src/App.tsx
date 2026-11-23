@@ -4,6 +4,9 @@ import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-route
 import Header from './components/Header';
 import LocationPicker from './components/LocationPicker';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminInquiriesPage from './pages/AdminInquiriesPage';
+import AdminPostDetailPage from './pages/AdminPostDetailPage';
+import AdminPostsPage from './pages/AdminPostsPage';
 import AdminPage from './pages/AdminPage';
 import AdminUserDetailPage from './pages/AdminUserDetailPage';
 import AdminUsersPage from './pages/AdminUsersPage';
@@ -83,6 +86,9 @@ export default function App() {
             <Route path="/password/reset" element={<GuestOnly><PasswordResetPage /></GuestOnly>} />
             <Route path="/setup-location" element={<SetupLocationPage />} />
             <Route path="/admin" element={<AdminOnly><AdminDashboardPage /></AdminOnly>} />
+            <Route path="/admin/posts" element={<AdminOnly><AdminPostsPage /></AdminOnly>} />
+            <Route path="/admin/posts/:postId" element={<AdminOnly><AdminPostDetailPage /></AdminOnly>} />
+            <Route path="/admin/inquiries" element={<AdminOnly><AdminInquiriesPage /></AdminOnly>} />
             <Route path="/admin/reports" element={<AdminOnly><AdminPage /></AdminOnly>} />
             <Route path="/admin/users" element={<AdminOnly><AdminUsersPage /></AdminOnly>} />
             <Route path="/admin/users/:userId" element={<AdminOnly><AdminUserDetailPage /></AdminOnly>} />

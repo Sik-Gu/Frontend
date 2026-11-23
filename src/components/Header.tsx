@@ -26,7 +26,9 @@ export default function Header() {
           <>
             <nav className="nav">
               <NavLink to="/admin" end>대시보드</NavLink>
+              <NavLink to="/admin/posts">공구</NavLink>
               <NavLink to="/admin/users">이용자</NavLink>
+              <NavLink to="/admin/inquiries">문의</NavLink>
               <NavLink to="/admin/reports">신고 관리</NavLink>
             </nav>
             <div className="header-right">

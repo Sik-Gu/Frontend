@@ -496,7 +496,7 @@ svg.icon { flex-shrink: 0; }
 }
 
 /* ---------- 관리자 대시보드 ---------- */
-.admin-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.admin-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
 .admin-kpi { display: flex; flex-direction: column; gap: 6px; padding: 20px; }
 .admin-kpi-link { color: inherit; text-decoration: none; }
 @media (hover: hover) { .admin-kpi-link:hover { border-color: var(--line-strong); } }
