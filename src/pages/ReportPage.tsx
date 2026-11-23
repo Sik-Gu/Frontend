@@ -92,7 +92,7 @@ export default function ReportPage() {
         content: content.trim() || undefined,
         imageUrls: images,
       });
-      toast.ok('신고를 접수했어요. 운영팀이 검토할게요.');
+      toast.ok('신고 접수 완료 · 운영팀 검토 예정');
       navigate(related ? `/posts/${related.postId}` : '/', { replace: true });
     } catch (e) {
       toast.error(e);
@@ -135,10 +135,10 @@ export default function ReportPage() {
                   <div className="stack sm" style={{ marginTop: 8 }}>
                     <span className="small strong">문제가 된 메시지를 골라 주세요 (1개 이상)</span>
                     {!roomId ? (
-                      <div className="notice small">관련 공구의 채팅방이 없어요. 공구 상세나 채팅방에서 상대 프로필을 눌러 신고해 주세요.</div>
+                      <div className="notice small">관련 공구의 채팅방 없음 · 공구 상세나 채팅방에서 상대 프로필을 눌러 신고</div>
                     ) : messages === null ? <span className="small muted">메시지를 불러오는 중…</span>
-                      : messageError ? <div className="notice danger small">{messageError}</div>
-                        : messages.length === 0 ? <span className="small muted">이 채팅방에 상대가 보낸 메시지가 없어요.</span> : (
+                      : messageError ? <div className="notice small">{messageError}</div>
+                        : messages.length === 0 ? <span className="small muted">이 채팅방에 상대가 보낸 메시지 없음</span> : (
                           <div className="stack sm" style={{ maxHeight: 220, overflowY: 'auto', background: '#fff', border: '1px solid var(--surface-muted)', borderRadius: 8, padding: 8 }}>
                             {messages.map((m) => (
                               <label key={m.messageId} className="row small" style={{ gap: 8, cursor: 'pointer', alignItems: 'flex-start' }}>

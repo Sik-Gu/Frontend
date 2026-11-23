@@ -38,7 +38,7 @@ export default function PasswordResetPage() {
     setExpiresAt(Date.now() + res.expiresInSec * 1000);
     setCode('');
     setStep(2);
-    toast.ok(`${res.email}로 인증코드를 보냈어요`);
+    toast.ok(`${res.email}로 인증코드 발송`);
   });
 
   const verify = () => run(async () => {
@@ -49,7 +49,7 @@ export default function PasswordResetPage() {
 
   const reset = () => run(async () => {
     await authApi.resetPassword(resetToken, password);
-    toast.ok('비밀번호를 바꿨어요. 새 비밀번호로 로그인해 주세요.');
+    toast.ok('비밀번호 변경 완료 · 새 비밀번호로 로그인');
     navigate('/login', { replace: true });
   });
 
@@ -62,7 +62,7 @@ export default function PasswordResetPage() {
       <div className="card stack auth-card" style={{ maxWidth: 460, gap: 20 }}>
         <div>
           <h1 style={{ fontSize: 26, margin: 0 }}>비밀번호 찾기</h1>
-          <p className="muted" style={{ margin: '8px 0 0' }}>가입한 학교 이메일로 인증하고 새 비밀번호를 정해요</p>
+          <p className="muted" style={{ margin: '8px 0 0' }}>가입한 학교 이메일로 인증 후 새 비밀번호 설정</p>
         </div>
         <div className="row small" style={{ gap: 8 }}>
           {['이메일 인증', '코드 확인', '새 비밀번호'].map((label, i) => (
@@ -81,7 +81,7 @@ export default function PasswordResetPage() {
 
         {step === 2 && (
           <form className="stack" onSubmit={(e) => { e.preventDefault(); verify(); }}>
-            <div className="notice small">{email}로 보낸 6자리 코드를 입력해 주세요 (정크메일함도 확인해 주세요).</div>
+            <div className="notice small">{email}로 보낸 6자리 코드 입력 (정크메일함도 확인)</div>
             <div className="field"><label htmlFor="reset-code">인증코드 {left > 0 ? `(${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')})` : '(만료됨)'}</label>
               <input id="reset-code" className="input" inputMode="numeric" maxLength={6} placeholder="123456" value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} required /></div>
@@ -101,7 +101,7 @@ export default function PasswordResetPage() {
                 onChange={(e) => setPassword2(e.target.value)} required />
               {password2 && !same && <span className="small error-text">비밀번호가 서로 달라요</span>}</div>
             <button className="btn btn-primary btn-block" disabled={busy || !pwOk || !same}>{busy ? '바꾸는 중…' : '비밀번호 바꾸기'}</button>
-            <p className="small muted" style={{ margin: 0 }}>바꾸면 다른 기기에 남아 있던 로그인은 풀려요.</p>
+            <p className="small muted" style={{ margin: 0 }}>변경 시 다른 기기의 로그인은 해제됨</p>
           </form>
         )}
 

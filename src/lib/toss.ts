@@ -24,8 +24,8 @@ function loadSdk(): Promise<TossPaymentsSdk> {
     loading = new Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.src = SDK_URL;
-      script.onload = () => (window.TossPayments ? resolve(window.TossPayments) : reject(new Error('토스 결제 모듈을 불러오지 못했어요.')));
-      script.onerror = () => { loading = null; reject(new Error('토스 결제 모듈을 불러오지 못했어요. 네트워크를 확인해 주세요.')); };
+      script.onload = () => (window.TossPayments ? resolve(window.TossPayments) : reject(new Error('토스 결제 모듈 로드 실패')));
+      script.onerror = () => { loading = null; reject(new Error('토스 결제 모듈 로드 실패 · 네트워크 확인 필요')); };
       document.head.appendChild(script);
     });
   }
@@ -40,7 +40,7 @@ function methodOptions(method: ChargeMethod) {
 
 /** 토스 결제창을 연다. 사용자가 창을 닫으면 USER_CANCEL 코드로 reject 된다 */
 export async function openTossPayment(order: ChargePrepareResponse, method: ChargeMethod): Promise<void> {
-  if (!order.clientKey) throw new Error('서버에 토스 클라이언트 키가 설정되지 않았어요.');
+  if (!order.clientKey) throw new Error('서버에 토스 클라이언트 키 미설정');
   const TossPayments = await loadSdk();
   const payment = TossPayments(order.clientKey).payment({ customerKey: TossPayments.ANONYMOUS });
   await payment.requestPayment({

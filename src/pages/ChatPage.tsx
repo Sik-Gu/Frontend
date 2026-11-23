@@ -190,7 +190,7 @@ function ChatRoom({ roomId, client, connected, onActivity }: {
     e.preventDefault();
     const content = text.trim();
     if (!content) return;
-    if (!connected) { toast.error(new Error('실시간 연결이 끊겨 있어요. 잠시 후 다시 보내 주세요.')); return; }
+    if (!connected) { toast.error(new Error('실시간 연결 끊김 · 잠시 후 다시 전송')); return; }
     stickBottom.current = true;
     client.publish({ destination: `/pub/chats/${roomId}/messages`, body: JSON.stringify({ type: 'TEXT', content }) });
     setText('');

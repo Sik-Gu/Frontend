@@ -53,7 +53,7 @@ export default function ProfileModal({ userId, role, post, onClose }: {
     try {
       if (profile.isBlocked) await userApi.unblock(userId);
       else await userApi.block(userId);
-      toast.ok(profile.isBlocked ? '차단을 풀었어요' : '차단했어요. 서로의 공구와 채팅이 보이지 않아요.');
+      toast.ok(profile.isBlocked ? '차단 해제됨' : '차단됨 · 서로의 공구와 채팅 숨김');
       await load();
     } catch (e) {
       toast.error(e);
@@ -118,7 +118,7 @@ export default function ProfileModal({ userId, role, post, onClose }: {
           <button className="btn btn-ghost small" onClick={() => loadReviews(0)}>전체보기</button>
         )}
       </div>
-      {reviews.length === 0 ? <div className="small muted">아직 받은 후기가 없어요.</div> : (
+      {reviews.length === 0 ? <div className="small muted">아직 받은 후기 없음</div> : (
         <div className="stack sm">
           {reviews.map((r) => (
             <div key={r.key} style={{ background: 'var(--surface-muted)', borderRadius: 8, padding: '10px 14px' }}>

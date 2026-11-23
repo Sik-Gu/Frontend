@@ -38,7 +38,7 @@ function LoginCard() {
     setBusy(true);
     try {
       const me = await login(email.trim(), password);
-      toast.ok(`${me?.nickname ?? ''}님, 반가워요`);
+      toast.ok(`${me?.nickname ?? ''}님 로그인 완료`);
       navigate(me?.role === 'ADMIN' ? '/admin' : me?.location ? '/' : '/setup-location');
     } catch (err) {
       toast.error(err);
@@ -51,7 +51,7 @@ function LoginCard() {
     <form className="card stack auth-card" style={{ maxWidth: 460, gap: 20 }} onSubmit={submit}>
       <div>
         <h1 style={{ fontSize: 26, margin: 0 }}>로그인</h1>
-        <p className="muted" style={{ margin: '8px 0 0' }}>학교 이메일로 인증된 이웃과 공동구매해요</p>
+        <p className="muted" style={{ margin: '8px 0 0' }}>학교 이메일로 인증된 이웃과 공동구매</p>
       </div>
       <div className="field"><label htmlFor="login-email">학교 이메일</label>
         <input id="login-email" className="input" type="email" placeholder="example@univ.ac.kr" value={email}
@@ -108,14 +108,14 @@ function SignupCard() {
     setExpiresAt(Date.now() + res.expiresInSec * 1000);
     setToken(null);
     setCode('');
-    toast.ok(`${res.email}로 인증코드를 보냈어요. 메일함(정크 메일함 포함)을 확인해 주세요.`);
+    toast.ok(`${res.email}로 인증코드 발송 · 메일함(정크 메일함 포함) 확인`);
   });
 
   const verify = () => run(async () => {
     const res = await authApi.verifyEmail(sentTo ?? email.trim(), code.trim());
     setToken(res.verificationToken);
     setStep(2);
-    toast.ok('이메일 인증이 끝났어요. 비밀번호를 정해 주세요.');
+    toast.ok('이메일 인증 완료 · 비밀번호 설정');
   });
 
   const pwError = password && !PASSWORD_RULE.test(password)
@@ -126,7 +126,7 @@ function SignupCard() {
     if (!token) return;
     const res = await authApi.signup(token, password);
     await login(sentTo ?? email.trim(), password);
-    toast.ok(`가입했어요! 닉네임은 '${res.nickname}'이에요.`);
+    toast.ok(`가입 완료 · 닉네임 '${res.nickname}'`);
     setStep(3);
   });
 
@@ -158,7 +158,7 @@ function SignupCard() {
           </div>
           {sentTo && step === 1 && (
             <p className="hint" style={{ margin: '-8px 0 0' }}>
-              {left > 0 ? `코드 유효 시간 ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}` : '코드가 만료됐어요. 다시 보내 주세요.'}
+              {left > 0 ? `코드 유효 시간 ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}` : '코드 만료 · 다시 받기 필요'}
             </p>
           )}
 
@@ -181,7 +181,7 @@ function SignupCard() {
           </div>
           {pwError && <p className="error-text" style={{ margin: '-8px 0 0' }}>{pwError}</p>}
 
-          <div className="notice">닉네임은 가입할 때 랜덤으로 만들어져요 · 예) 배고픈 고구마</div>
+          <div className="notice">닉네임은 가입 시 랜덤 생성 · 예) 배고픈 고구마</div>
           <button type="button" className="btn btn-primary btn-block"
             disabled={busy || step !== 2 || !password || !!pwError || password !== password2} onClick={signup}>
             가입하기

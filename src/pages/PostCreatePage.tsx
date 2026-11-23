@@ -55,7 +55,7 @@ export default function PostCreatePage() {
         totalUnits: units, totalPrice: price, hostUnits: host,
       });
       await refresh();
-      toast.ok(`공구를 열었어요! 내 몫 ${pt(res.paidPoint)}가 결제(보류)됐어요. 남은 포인트 ${pt(res.balanceAfter)}`);
+      toast.ok(`공구 열기 완료 · 내 몫 ${pt(res.paidPoint)} 결제(보류) · 남은 포인트 ${pt(res.balanceAfter)}`);
       navigate(`/posts/${res.postId}`);
     } catch (err) {
       if (err instanceof ApiError && err.code === 'POINT409') setShortage(true);
@@ -70,7 +70,7 @@ export default function PostCreatePage() {
       <form className="card stack lg" style={{ padding: 40 }} onSubmit={submit}>
         <div>
           <h1 style={{ fontSize: 26, margin: 0 }}>공구 열기</h1>
-          <p className="muted" style={{ margin: '6px 0 0' }}>함께 살 상품 정보를 입력해 주세요. 등록하면 자동으로 호스트가 되고, 내가 살 몫은 바로 포인트로 결제(보류)돼요.</p>
+          <p className="muted" style={{ margin: '6px 0 0' }}>함께 살 상품 정보 입력 · 등록하면 자동으로 호스트가 됨</p>
         </div>
 
         <div className="field"><label>상품 사진 (최대 10장)</label>
@@ -94,7 +94,7 @@ export default function PostCreatePage() {
         <div className="stack" style={{ background: 'var(--bg)', border: '1px solid var(--surface-muted)', borderRadius: 12, padding: 24 }}>
           <div>
             <div className="section-title" style={{ margin: 0 }}>판매 단위 설정</div>
-            <div className="small muted">기본 단위를 정하면 참여자가 단위 기준으로 여러 개 구매할 수 있어요</div>
+            <div className="small muted">기본 단위를 정하면 참여자가 단위 기준으로 여러 개 구매 가능</div>
           </div>
           <div className="row split" style={{ gap: 12, alignItems: 'flex-start' }}>
             <div className="field grow"><label>기본 단위</label>
@@ -127,18 +127,18 @@ export default function PostCreatePage() {
             onChange={(e) => setContent(e.target.value)} /></div>
 
         <div className="field"><label>거래 위치</label>
-          <div className="input muted">{me?.location?.dongName ?? '동네 미설정'} · 내 집 위치 기준으로 근처 이웃에게 보여요 (정확한 좌표는 공개되지 않아요)</div></div>
+          <div className="input muted">{me?.location?.dongName ?? '동네 미설정'} · 내 집 위치 기준으로 근처 이웃에게 노출 (정확한 좌표는 비공개)</div></div>
 
-        <div className={`notice${shortage ? ' danger' : ''}`}>
+        <div className="notice">
           {Number.isNaN(hostPay)
-            ? <>내가 살 수량을 입력하면 결제(보류)될 포인트가 보여요</>
-            : <>등록하면 내 몫 <b>{pt(hostPay)}</b>가 바로 결제(보류)돼요</>} · 지금 사용 가능 {pt(balance)}
-          {shortage && <> — 포인트가 부족해요. <Link to="/points" style={{ textDecoration: 'underline' }}>충전하러 가기</Link></>}
+            ? <>내가 살 수량을 입력하면 결제(보류)될 포인트 표시</>
+            : <>등록하면 내 몫 <b>{pt(hostPay)}</b> 즉시 결제(보류)</>} · 사용 가능 {pt(balance)}
+          {shortage && <> · 포인트 부족. <Link to="/points" style={{ textDecoration: 'underline' }}>충전하기</Link></>}
         </div>
 
         <hr className="divider" />
         <div className="row between">
-          <span className="small muted">* 모집 기간은 7일이에요. 총 단위가 모두 모이면 자동으로 모집 완료돼요.</span>
+          <span className="small muted">* 모집 기간 7일 · 총 단위가 모두 모이면 자동 모집 완료</span>
           <div className="row">
             <button type="button" className="btn btn-secondary" onClick={() => navigate(-1)}>취소</button>
             <button className="btn btn-primary" disabled={!ready || busy}>{busy ? '등록 중…' : '등록하기'}</button>
