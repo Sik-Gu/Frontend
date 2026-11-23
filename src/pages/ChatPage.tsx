@@ -35,7 +35,8 @@ export default function ChatPage() {
   // WebSocket(STOMP) 연결은 채팅 화면에 있는 동안 하나만 유지한다
   useEffect(() => {
     const c = new Client({
-      brokerURL: `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws-stomp`,
+      // 배포 환경에서는 Vercel이 WebSocket을 프록시하지 못하므로 VITE_WS_URL(예: wss://api.example.com/ws-stomp)로 백엔드에 직접 연결
+      brokerURL: import.meta.env.VITE_WS_URL ?? `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws-stomp`,
       reconnectDelay: 3000,
       beforeConnect: async () => { c.connectHeaders = { Authorization: `Bearer ${tokens.access ?? ''}` }; },
       onConnect: () => setConn('connected'),
