@@ -461,6 +461,11 @@ svg.icon { flex-shrink: 0; }
   .home-cats .chip { height: 34px !important; padding: 0 14px; font-size: 13px; flex-shrink: 0; }
   /* 공구 상세: 제목·가격·참여 버튼(오른쪽 칸)을 먼저 */
   .detail-split > :last-child { order: -1; }
+  /* 공구 상세 대표 사진: 폰에서는 4:3 비율로 작게 (PC는 높이 440 그대로) */
+  .detail-main-img { height: auto !important; aspect-ratio: 4 / 3; }
+  .detail-thumbs { overflow-x: auto; gap: 8px !important; scrollbar-width: none; }
+  .detail-thumbs > button { flex-shrink: 0; }
+  .detail-thumbs .img-ph { width: 64px !important; height: 48px !important; }
   .hero-dong, .hero-actions .btn { font-size: 13px; }
   .split-card { padding: 20px; }
   .split-price { font-size: 28px; }

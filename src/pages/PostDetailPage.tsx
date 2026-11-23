@@ -108,9 +108,9 @@ export default function PostDetailPage() {
         {/* 왼쪽 */}
         <div className="grow stack lg">
           <div className="stack sm">
-            <ImageBox src={images[imageIndex]} label="상품 대표 이미지" style={{ height: 440, borderRadius: 12 }} />
+            <ImageBox src={images[imageIndex]} label="상품 대표 이미지" className="detail-main-img" style={{ height: 440, borderRadius: 12 }} />
             {post.imageUrls.length > 1 && (
-              <div className="row" style={{ gap: 10 }}>
+              <div className="row detail-thumbs" style={{ gap: 10 }}>
                 {post.imageUrls.map((u, i) => (
                   <button key={u} onClick={() => setImageIndex(i)} style={{ border: i === imageIndex ? '2px solid var(--primary)' : '1px solid var(--surface-muted)', padding: 0, borderRadius: 8, cursor: 'pointer', background: 'none' }}>
                     <ImageBox src={u} style={{ width: 96, height: 70, borderRadius: 7 }} />
