@@ -6,7 +6,7 @@ import NotificationBell from './NotificationBell';
 import { Avatar } from './ui';
 
 export default function Header() {
-  const { me } = useSession();
+  const { me, logout } = useSession();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const [keyword, setKeyword] = useState(params.get('keyword') ?? '');
@@ -15,7 +15,16 @@ export default function Header() {
     <header className="header">
       <div className="header-inner">
         <Link to="/" className="logo">Sik-Gu</Link>
-        {me && (
+        {me?.role === 'ADMIN' && (
+          <>
+            <nav className="nav"><NavLink to="/admin">신고 관리</NavLink></nav>
+            <div className="header-right">
+              <span className="small muted">관리자 · {me.email}</span>
+              <button className="btn btn-secondary btn-sm" onClick={async () => { await logout(); navigate('/login'); }}>로그아웃</button>
+            </div>
+          </>
+        )}
+        {me && me.role !== 'ADMIN' && (
           <nav className="nav">
             <NavLink to="/" end>홈</NavLink>
             <NavLink to="/chats">채팅</NavLink>
@@ -23,7 +32,7 @@ export default function Header() {
             <NavLink to="/me">마이페이지</NavLink>
           </nav>
         )}
-        {me && (
+        {me && me.role !== 'ADMIN' && (
           <div className="header-right">
             <form onSubmit={(e) => {
               e.preventDefault();

@@ -83,7 +83,7 @@ export default function LocationPicker({ onDone, submitLabel = '이 동네로 �
             onChange={(e) => setLng(e.target.value.trim())} /></div>
         <button type="button" className="btn btn-secondary" onClick={useGps}>현재 위치</button>
       </div>
-      <div className="field"><label>동 이름 (좌표로 자동 설정 · 수정 불가)</label>
+      <div className="field"><label>지역 (시·도 시·군·구 동 · 좌표로 자동 설정 · 수정 불가)</label>
         <input className="input" value={dongText} readOnly tabIndex={-1} aria-readonly
           style={{ background: '#f2f2f2', color: resolved ? '#1a1a1a' : lookupError ? '#c62828' : '#808080', cursor: 'default' }} />
       </div>

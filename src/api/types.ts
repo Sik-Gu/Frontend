@@ -33,6 +33,7 @@ export interface MeResponse {
   location: LocationResponse | null; joinedAt: string; rating: number | null; reviewCount: number;
   tradeCount: number; postCounts: { ongoing: number; done: number; actionRequired: number };
   point: { availableBalance: number; heldAmount: number; unpaidDebt: number }; restricted: boolean;
+  role: 'USER' | 'ADMIN';
 }
 export interface MyPostCard {
   post: PostCard; myRole: ParticipationRole; myUnits: number;
@@ -156,4 +157,16 @@ export type NotificationType =
   | 'ORDERED' | 'SHIPPED' | 'DISTRIBUTION_SCHEDULED' | 'SETTLED' | 'CANCELLED' | 'EXPIRED';
 export interface NotificationItem {
   notificationId: number; type: NotificationType; message: string; postId: number | null; read: boolean; createdAt: string;
+}
+
+// ---------- 관리자 ----------
+export type ReportStatus = 'PENDING' | 'DONE';
+export type UserStatus = 'ACTIVE' | 'SUSPENDED';
+export interface AdminUser {
+  userId: number; nickname: string; email: string; role: 'USER' | 'ADMIN'; status: UserStatus; suspendedUntil: string | null;
+}
+export interface AdminReport {
+  reportId: number; reason: ReportReason; violationStage: ViolationStage | null; content: string | null; imageUrls: string[];
+  messages: { messageId: number; type: MessageType; content: string | null; imageUrl: string | null; sentAt: string }[];
+  status: ReportStatus; createdAt: string; reporter: AdminUser; target: AdminUser;
 }

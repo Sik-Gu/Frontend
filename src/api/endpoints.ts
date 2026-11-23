@@ -8,6 +8,12 @@ export const authApi = {
     post<T.SignupResponse>('/api/auth/signup', { verificationToken, password }),
   login: (email: string, password: string) => post<T.LoginResponse>('/api/auth/login', { email, password }),
   logout: () => post<void>('/api/auth/logout'),
+  // 비밀번호 찾기: 인증코드 발송 → 확인(재설정 토큰) → 새 비밀번호
+  sendResetCode: (email: string) => post<T.EmailSendResponse>('/api/auth/password/email/send', { email }),
+  verifyResetCode: (email: string, code: string) =>
+    post<T.EmailVerifyResponse>('/api/auth/password/email/verify', { email, code }),
+  resetPassword: (resetToken: string, newPassword: string) =>
+    post<null>('/api/auth/password/reset', { resetToken, newPassword }),
 };
 
 export const userApi = {
@@ -27,6 +33,13 @@ export const locationApi = {
   /** 좌표 → 동 이름 (백엔드가 OpenStreetMap Nominatim 으로 조회) */
   lookupDong: (latitude: number, longitude: number) =>
     get<T.LocationResponse>(`/api/locations/dong${qs({ latitude, longitude })}`),
+};
+
+export const adminApi = {
+  reports: (status: T.ReportStatus | undefined, page = 0) =>
+    get<T.Page<T.AdminReport>>(`/api/admin/reports${qs({ status, page, size: 20 })}`),
+  changeUserStatus: (userId: number, status: T.UserStatus, suspendedUntil?: string | null) =>
+    patch<T.AdminUser>(`/api/admin/users/${userId}/status`, { status, suspendedUntil: suspendedUntil ?? null }),
 };
 
 export const reportApi = {
