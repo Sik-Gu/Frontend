@@ -36,6 +36,11 @@ export const locationApi = {
 };
 
 export const adminApi = {
+  statsSummary: () => get<T.StatsSummary>('/api/admin/stats/summary'),
+  statsDaily: (days: number) => get<T.DailyStat[]>(`/api/admin/stats/daily${qs({ days })}`),
+  users: (keyword: string | undefined, status: T.UserStatus | undefined, page = 0) =>
+    get<T.Page<T.AdminUserItem>>(`/api/admin/users${qs({ keyword, status, page, size: 20 })}`),
+  user: (userId: number) => get<T.AdminUserDetail>(`/api/admin/users/${userId}`),
   reports: (status: T.ReportStatus | undefined, page = 0) =>
     get<T.Page<T.AdminReport>>(`/api/admin/reports${qs({ status, page, size: 20 })}`),
   changeUserStatus: (userId: number, status: T.UserStatus, suspendedUntil?: string | null) =>

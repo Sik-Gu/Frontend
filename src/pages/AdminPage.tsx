@@ -5,7 +5,7 @@ import { ImageBox, Pagination } from '../components/ui';
 import { fullDateTime } from '../lib/format';
 import { useToast } from '../lib/session';
 
-const REASON_LABEL: Record<ReportReason, string> = {
+export const REASON_LABEL: Record<ReportReason, string> = {
   CHAT_ABUSE: '채팅 비속어 등',
   TRADE_VIOLATION: '거래 중 규칙 위반',
   ETC: '기타',
@@ -116,7 +116,7 @@ function ReportCard({ report: r, onChanged }: { report: AdminReport; onChanged: 
   );
 }
 
-function UserBox({ title, user, onChanged, highlight }: {
+export function UserBox({ title, user, onChanged, highlight }: {
   title: string; user: AdminUser; onChanged: () => void; highlight?: boolean;
 }) {
   const toast = useToast();

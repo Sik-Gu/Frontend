@@ -3,7 +3,10 @@ import { Analytics } from '@vercel/analytics/react';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import LocationPicker from './components/LocationPicker';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminPage from './pages/AdminPage';
+import AdminUserDetailPage from './pages/AdminUserDetailPage';
+import AdminUsersPage from './pages/AdminUsersPage';
 import ChargeResultPage from './pages/ChargeResultPage';
 import ChatPage from './pages/ChatPage';
 import HomePage from './pages/HomePage';
@@ -79,7 +82,10 @@ export default function App() {
             <Route path="/signup" element={<GuestOnly><SignupPage /></GuestOnly>} />
             <Route path="/password/reset" element={<GuestOnly><PasswordResetPage /></GuestOnly>} />
             <Route path="/setup-location" element={<SetupLocationPage />} />
-            <Route path="/admin" element={<AdminOnly><AdminPage /></AdminOnly>} />
+            <Route path="/admin" element={<AdminOnly><AdminDashboardPage /></AdminOnly>} />
+            <Route path="/admin/reports" element={<AdminOnly><AdminPage /></AdminOnly>} />
+            <Route path="/admin/users" element={<AdminOnly><AdminUsersPage /></AdminOnly>} />
+            <Route path="/admin/users/:userId" element={<AdminOnly><AdminUserDetailPage /></AdminOnly>} />
             <Route path="/" element={<HomeOrLanding />} />
             <Route path="/posts/new" element={<Protected><PostCreatePage /></Protected>} />
             <Route path="/posts/:postId" element={<Protected><PostDetailPage /></Protected>} />
