@@ -83,7 +83,7 @@ function ReportCard({ report: r, onChanged }: { report: AdminReport; onChanged: 
 
       <div className="stack sm">
         <span className="small strong">신고 내용</span>
-        <div style={{ background: '#f7f7f7', borderRadius: 8, padding: '10px 14px', whiteSpace: 'pre-wrap' }}>
+        <div style={{ background: 'var(--surface-muted)', borderRadius: 8, padding: '10px 14px', whiteSpace: 'pre-wrap' }}>
           {r.content || <span className="muted">내용 없음</span>}
         </div>
       </div>
@@ -92,7 +92,7 @@ function ReportCard({ report: r, onChanged }: { report: AdminReport; onChanged: 
         <div className="stack sm">
           <span className="small strong">신고된 채팅 메시지 ({r.messages.length})</span>
           {r.messages.map((m) => (
-            <div key={m.messageId} className="row between small" style={{ border: '1px solid #e6e6e6', borderRadius: 8, padding: '8px 12px' }}>
+            <div key={m.messageId} className="row between small" style={{ border: '1px solid var(--surface-muted)', borderRadius: 8, padding: '8px 12px' }}>
               <span>{m.type === 'IMAGE' && m.imageUrl
                 ? <a href={m.imageUrl} target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>[사진 보기]</a>
                 : m.content}</span>
@@ -139,7 +139,7 @@ function UserBox({ title, user, onChanged, highlight }: {
   };
 
   return (
-    <div className="grow stack sm" style={{ border: `1px solid ${highlight ? '#bfbfbf' : '#e6e6e6'}`, borderRadius: 10, padding: 14 }}>
+    <div className="grow stack sm" style={{ border: `1px solid ${highlight ? 'var(--line-button)' : 'var(--surface-muted)'}`, borderRadius: 10, padding: 14 }}>
       <div className="row between">
         <span className="small muted">{title}</span>
         <span className={`badge${suspended ? '' : ' muted'}`} style={suspended ? { background: 'var(--danger)' } : undefined}>

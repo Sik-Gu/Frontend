@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { chatApi, reportApi, userApi } from '../api/endpoints';
 import type { ChatMessage, ProfileResponse, ReportReason, ViolationStage } from '../api/types';
-import { ImageBox, ImageUploader } from '../components/ui';
+import { Icon, ImageBox, ImageUploader } from '../components/ui';
 import { clock } from '../lib/format';
 import { useToast } from '../lib/session';
 
@@ -109,11 +109,11 @@ export default function ReportPage() {
             <h1 style={{ fontSize: 22, margin: 0 }}>신고하기</h1>
             <div className="small muted">{target ? `${target.nickname}님을 신고해요` : '불러오는 중…'}</div>
           </div>
-          <button className="btn btn-ghost" aria-label="닫기" onClick={() => navigate(-1)}>✕</button>
+          <button className="btn btn-ghost" aria-label="닫기" onClick={() => navigate(-1)}><Icon name="close" size={20} /></button>
         </div>
 
         {related && (
-          <div className="row" style={{ background: '#f7f7f7', borderRadius: 8, padding: 10, gap: 10 }}>
+          <div className="row" style={{ background: 'var(--surface-muted)', borderRadius: 8, padding: 10, gap: 10 }}>
             <ImageBox src={related.thumbnailUrl} label="" style={{ width: 36, height: 36, borderRadius: 6, fontSize: 0 }} />
             <div className="grow">
               <div className="small muted">관련 공구</div>
@@ -139,7 +139,7 @@ export default function ReportPage() {
                     ) : messages === null ? <span className="small muted">메시지를 불러오는 중…</span>
                       : messageError ? <div className="notice danger small">{messageError}</div>
                         : messages.length === 0 ? <span className="small muted">이 채팅방에 상대가 보낸 메시지가 없어요.</span> : (
-                          <div className="stack sm" style={{ maxHeight: 220, overflowY: 'auto', background: '#fff', border: '1px solid #e6e6e6', borderRadius: 8, padding: 8 }}>
+                          <div className="stack sm" style={{ maxHeight: 220, overflowY: 'auto', background: '#fff', border: '1px solid var(--surface-muted)', borderRadius: 8, padding: 8 }}>
                             {messages.map((m) => (
                               <label key={m.messageId} className="row small" style={{ gap: 8, cursor: 'pointer', alignItems: 'flex-start' }}>
                                 <input type="checkbox" checked={picked.includes(m.messageId)} onChange={(e) => setPicked(e.target.checked

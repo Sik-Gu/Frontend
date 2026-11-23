@@ -5,9 +5,14 @@ import type { ParticipationRole, ProfileResponse, ReceivedReview } from '../api/
 import { CATEGORY_LABEL, STATUS_LABEL, TAG_LABEL } from '../lib/format';
 import { useSession, useToast } from '../lib/session';
 import type { ReportPostState } from '../pages/ReportPage';
-import { Avatar, Modal } from './ui';
+import { Avatar, Icon, Modal } from './ui';
 
-const stars = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
+/** 별점: 채운 별 n개 + 빈 별 */
+const Stars = ({ n }: { n: number }) => (
+  <span className="row" style={{ display: 'inline-flex', gap: 1, color: 'var(--accent)' }} aria-label={`${n}점`}>
+    {[1, 2, 3, 4, 5].map((i) => <span key={i} style={{ color: i <= n ? 'var(--accent)' : 'var(--line-strong)', display: 'inline-flex' }}><Icon name="star" size={13} filled /></span>)}
+  </span>
+);
 const mmdd = (iso: string | null) => {
   if (!iso) return '';
   const d = new Date(iso);
@@ -77,15 +82,15 @@ export default function ProfileModal({ userId, role, post, onClose }: {
             {isMe && <span className="badge outline">나</span>}
           </div>
           <div className="small muted">
-            {profile.universityName ? `✓ ${profile.universityName} 인증` : '학교 인증'}
-            {profile.dongName ? ` · 📍 ${profile.dongName}` : ''} · 가입 {profile.joinedAt.slice(0, 7).replace('-', '.')}
+            {profile.universityName ? `${profile.universityName} 인증` : '학교 인증'}
+            {profile.dongName ? ` · ${profile.dongName}` : ''} · 가입 {profile.joinedAt.slice(0, 7).replace('-', '.')}
           </div>
         </div>
       </div>
 
       <div className="row" style={{ gap: 8 }}>
         <div className="stat-box">
-          <div style={{ fontSize: 18, fontWeight: 700 }}>★ {profile.rating ?? '-'}</div>
+          <div style={{ fontSize: 18, fontWeight: 700 }}>평점 {profile.rating ?? '-'}</div>
           <div className="small muted">평점 · 후기 {profile.reviewCount}개</div>
         </div>
         <div className="stat-box">
@@ -110,15 +115,15 @@ export default function ProfileModal({ userId, role, post, onClose }: {
       <div className="row between">
         <span className="strong">받은 후기 {profile.reviewCount}</span>
         {!allReviews && profile.reviewCount > profile.recentReviews.length && (
-          <button className="btn btn-ghost small" onClick={() => loadReviews(0)}>전체보기 ›</button>
+          <button className="btn btn-ghost small" onClick={() => loadReviews(0)}>전체보기</button>
         )}
       </div>
       {reviews.length === 0 ? <div className="small muted">아직 받은 후기가 없어요.</div> : (
         <div className="stack sm">
           {reviews.map((r) => (
-            <div key={r.key} style={{ background: '#f7f7f7', borderRadius: 8, padding: '10px 14px' }}>
+            <div key={r.key} style={{ background: 'var(--surface-muted)', borderRadius: 8, padding: '10px 14px' }}>
               <div className="row between small">
-                <span style={{ letterSpacing: 1 }}>{stars(r.rating)}</span>
+                <Stars n={r.rating} />
                 <span className="muted">{r.nickname} · {r.title} · {mmdd(r.date)}</span>
               </div>
               <div className="small" style={{ marginTop: 4 }}>{r.content || '별점만 남겼어요.'}</div>
@@ -153,7 +158,7 @@ export default function ProfileModal({ userId, role, post, onClose }: {
             <button className="btn btn-secondary grow" onClick={() => {
               onClose();
               navigate(`/report?userId=${profile.userId}`, { state: post ? { post } : null });
-            }}>🚩 신고하기</button>
+            }}>신고하기</button>
             <button className="btn btn-secondary grow" disabled={busy} onClick={toggleBlock}>
               {profile.isBlocked ? '차단 해제' : '차단하기'}
             </button>

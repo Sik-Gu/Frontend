@@ -85,10 +85,10 @@ export default function LocationPicker({ onDone, submitLabel = '이 동네로 �
       </div>
       <div className="field"><label>지역 (시·도 시·군·구 동 · 좌표로 자동 설정 · 수정 불가)</label>
         <input className="input" value={dongText} readOnly tabIndex={-1} aria-readonly
-          style={{ background: '#f2f2f2', color: resolved ? '#1a1a1a' : lookupError ? '#c62828' : '#808080', cursor: 'default' }} />
+          style={{ background: 'var(--surface-muted)', color: resolved ? 'var(--text-strong)' : lookupError ? 'var(--danger)' : 'var(--text-muted)', cursor: 'default' }} />
       </div>
       {!valid && (lat !== '' || lng !== '') && (
-        <p className="hint" style={{ margin: 0, color: '#c62828' }}>위도는 -90~90, 경도는 -180~180 사이 숫자로 입력해 주세요.</p>
+        <p className="hint" style={{ margin: 0, color: 'var(--danger)' }}>위도는 -90~90, 경도는 -180~180 사이 숫자로 입력해 주세요.</p>
       )}
       <p className="hint" style={{ margin: 0 }}>
         다른 사람에게는 동 이름과 거리(500m·1km)만 보여요. 공구 목록은 이 좌표에서 반경 안에 있는 글을 보여줘요.

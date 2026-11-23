@@ -105,7 +105,7 @@ export default function PointPage() {
     <div className="page">
       <div className="row split" style={{ alignItems: 'flex-start', gap: 24 }}>
         <div className="stack" style={{ width: 420, flexShrink: 0, gap: 24 }}>
-          <div className="card" style={{ background: '#333', color: '#fff', borderColor: '#333' }}>
+          <div className="card" style={{ background: 'var(--primary)', color: '#fff', borderColor: 'var(--primary)' }}>
             <div className="small" style={{ opacity: .75 }}>사용 가능 포인트</div>
             <div style={{ fontSize: 34, fontWeight: 700 }} className="tabular">{wallet ? pt(wallet.availableBalance) : '-'}</div>
             <div className="small" style={{ opacity: .75 }}>
@@ -128,7 +128,7 @@ export default function PointPage() {
             <div className="field"><label>결제 수단</label>
               <div className="stack sm">
                 {METHODS.map((m) => (
-                  <label key={m.value} className="input row" style={{ cursor: 'pointer', background: method === m.value ? '#f2f2f2' : '#fff', borderColor: method === m.value ? '#333' : undefined }}>
+                  <label key={m.value} className="input row" style={{ cursor: 'pointer', background: method === m.value ? 'var(--surface-muted)' : '#fff', borderColor: method === m.value ? 'var(--primary)' : undefined }}>
                     <input type="radio" name="method" checked={method === m.value} onChange={() => setMethod(m.value)} /> {m.label}
                   </label>
                 ))}
@@ -195,7 +195,7 @@ export default function PointPage() {
           </table></div>
           {hasNext && (
             <div style={{ textAlign: 'center', padding: 12 }}>
-              <button className="btn btn-ghost small" onClick={() => loadTxs(filter, page + 1)}>더보기 ▾</button>
+              <button className="btn btn-ghost small" onClick={() => loadTxs(filter, page + 1)}>더보기</button>
             </div>
           )}
         </div>
