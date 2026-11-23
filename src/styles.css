@@ -291,9 +291,15 @@ img { display: block; max-width: 100%; }
   background: var(--danger); color: #fff; font-size: 11px; font-weight: 700; line-height: 17px; text-align: center; }
 .noti-panel { position: absolute; top: calc(100% + 8px); right: 0; width: 380px; max-height: 480px; overflow-y: auto; z-index: 40;
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
-.noti-item { display: block; width: 100%; text-align: left; padding: 12px 16px; border: 0; border-bottom: 1px solid #f0f0f0; background: #fff; cursor: pointer; }
-.noti-item.unread { background: #f5f7ff; }
-.noti-item:hover { background: #f7f7f7; }
+.noti-panel { color: var(--text); }
+/* 주의: 채팅의 전역 .unread(흰 글씨 배지)와 겹치지 않게 새 알림은 .is-new 를 쓴다 */
+.noti-item { display: block; width: 100%; text-align: left; padding: 12px 16px; border: 0; border-bottom: 1px solid #f0f0f0;
+  background: #fff; color: var(--text-sub); cursor: pointer; }
+.noti-item .noti-msg { color: var(--text-sub); }
+.noti-item.is-new { background: #eef3ff; border-left: 3px solid #1f5bd8; }
+.noti-item.is-new .noti-msg { color: var(--text-strong); font-weight: 700; }
+.noti-item:hover { background: #f2f2f2; }
+.noti-item.is-new:hover { background: #e3ebff; }
 
 /* 라디오 카드 (신고 사유) */
 .radio-card { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); cursor: pointer; }

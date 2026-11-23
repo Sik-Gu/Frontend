@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import LocationPicker from './components/LocationPicker';
+import AdminPage from './pages/AdminPage';
 import ChargeResultPage from './pages/ChargeResultPage';
 import ChatPage from './pages/ChatPage';
 import HomePage from './pages/HomePage';
@@ -9,6 +10,7 @@ import LoginPage, { SignupPage } from './pages/LoginPage';
 import MyPage from './pages/MyPage';
 import PointPage from './pages/PointPage';
 import PostCreatePage from './pages/PostCreatePage';
+import PasswordResetPage from './pages/PasswordResetPage';
 import PostDetailPage from './pages/PostDetailPage';
 import PostEditPage from './pages/PostEditPage';
 import ReportPage from './pages/ReportPage';
@@ -19,7 +21,17 @@ function Protected({ children }: { children: ReactNode }) {
   const { me, loading } = useSession();
   if (loading) return <div className="page muted">불러오는 중…</div>;
   if (!me) return <Navigate to="/login" replace />;
+  if (me.role === 'ADMIN') return <Navigate to="/admin" replace />; // 관리자 계정은 관리자 페이지만 쓴다
   if (!me.location) return <Navigate to="/setup-location" replace />;
+  return <>{children}</>;
+}
+
+/** 관리자 전용 화면: ADMIN 계정만 (동네 설정 필요 없음) */
+function AdminOnly({ children }: { children: ReactNode }) {
+  const { me, loading } = useSession();
+  if (loading) return <div className="page muted">불러오는 중…</div>;
+  if (!me) return <Navigate to="/login" replace />;
+  if (me.role !== 'ADMIN') return <Navigate to="/" replace />;
   return <>{children}</>;
 }
 
@@ -55,7 +67,9 @@ export default function App() {
           <Routes>
             <Route path="/login" element={<GuestOnly><LoginPage /></GuestOnly>} />
             <Route path="/signup" element={<GuestOnly><SignupPage /></GuestOnly>} />
+            <Route path="/password/reset" element={<GuestOnly><PasswordResetPage /></GuestOnly>} />
             <Route path="/setup-location" element={<SetupLocationPage />} />
+            <Route path="/admin" element={<AdminOnly><AdminPage /></AdminOnly>} />
             <Route path="/" element={<Protected><HomePage /></Protected>} />
             <Route path="/posts/new" element={<Protected><PostCreatePage /></Protected>} />
             <Route path="/posts/:postId" element={<Protected><PostDetailPage /></Protected>} />

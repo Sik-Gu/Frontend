@@ -87,11 +87,11 @@ export default function NotificationBell() {
           {items === null ? <div className="small muted" style={{ padding: 16 }}>불러오는 중…</div>
             : items.length === 0 ? <div className="small muted" style={{ padding: 24, textAlign: 'center' }}>아직 알림이 없어요.<br />공구에 참여하거나 공구를 열면 진행 소식을 알려드려요.</div>
               : items.map((n) => (
-                <button key={n.notificationId} type="button" className={`noti-item${n.read ? '' : ' unread'}`} onClick={() => openItem(n)}>
+                <button key={n.notificationId} type="button" className={`noti-item${n.read ? '' : ' is-new'}`} onClick={() => openItem(n)}>
                   <div className="row" style={{ gap: 10, alignItems: 'flex-start' }}>
                     <span style={{ fontSize: 18 }}>{ICON[n.type] ?? '🔔'}</span>
                     <div className="grow">
-                      <div className="small" style={{ fontWeight: n.read ? 400 : 700 }}>{n.message}</div>
+                      <div className="small noti-msg">{n.message}</div>
                       <div className="small muted">{ago(n.createdAt)}</div>
                     </div>
                     {!n.read && <span style={{ width: 7, height: 7, borderRadius: 99, background: '#c62828', marginTop: 6 }} />}

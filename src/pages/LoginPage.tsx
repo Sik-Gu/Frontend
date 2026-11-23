@@ -39,7 +39,7 @@ function LoginCard() {
     try {
       const me = await login(email.trim(), password);
       toast.ok(`${me?.nickname ?? ''}님, 반가워요`);
-      navigate(me?.location ? '/' : '/setup-location');
+      navigate(me?.role === 'ADMIN' ? '/admin' : me?.location ? '/' : '/setup-location');
     } catch (err) {
       toast.error(err);
     } finally {
@@ -64,7 +64,10 @@ function LoginCard() {
         아직 회원이 아니신가요?{' '}
         <Link to="/signup" style={{ color: 'var(--text-strong)', fontWeight: 700, textDecoration: 'underline' }}>회원가입하기</Link>
       </div>
-      <div className="small muted" style={{ textAlign: 'center' }} title="MVP 범위 밖이에요">비밀번호 찾기 (준비 중)</div>
+      <div className="small muted" style={{ textAlign: 'center' }}>
+        비밀번호를 잊으셨나요?{' '}
+        <Link to="/password/reset" style={{ color: 'var(--text-strong)', fontWeight: 700, textDecoration: 'underline' }}>비밀번호 찾기</Link>
+      </div>
     </form>
   );
 }
