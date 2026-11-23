@@ -1,8 +1,8 @@
-import { useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { imageApi } from '../api/endpoints';
 import type { ImageType, PostCard, PostStatus } from '../api/types';
-import { ago, CATEGORY_LABEL, DISTANCE_LABEL, STATUS_LABEL, won } from '../lib/format';
+import { ago, CATEGORY_LABEL, DISTANCE_LABEL, isClosingSoon, remaining, STATUS_LABEL, won } from '../lib/format';
 import { useToast } from '../lib/session';
 
 /** 이미지가 있으면 보여주고, 없으면 피그마처럼 회색 자리표시 */
@@ -30,12 +30,71 @@ export function Avatar({ name, size = '' }: { name?: string | null; size?: '' | 
   return <span className={`avatar ${size}`}>{name ? name.slice(0, 1) : ''}</span>;
 }
 
+/** 일정 간격으로 현재 시각을 갱신한다 (남은 시간 표시용) */
+export function useNow(intervalMs = 30000): number {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), intervalMs);
+    return () => clearInterval(t);
+  }, [intervalMs]);
+  return now;
+}
+
+/** 카드 사진: 여러 장이면 자동으로 옆으로 넘어가고, 화살표·점으로 직접 넘길 수도 있다 */
+export function CardCarousel({ urls, seed = 0 }: { urls: string[]; seed?: number }) {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const count = urls.length;
+
+  useEffect(() => {
+    if (count <= 1 || paused) return;
+    // 카드마다 시작 시점을 조금씩 달리해서 한꺼번에 넘어가지 않게 한다
+    let timer: ReturnType<typeof setInterval> | undefined;
+    const start = setTimeout(() => {
+      timer = setInterval(() => setIndex((i) => (i + 1) % count), 3000);
+    }, (seed % 5) * 400);
+    return () => { clearTimeout(start); if (timer) clearInterval(timer); };
+  }, [count, paused, seed]);
+
+  if (count === 0) return <ImageBox />;
+
+  const go = (e: React.MouseEvent, next: number) => {
+    e.preventDefault(); // 카드 링크로 이동하지 않게
+    e.stopPropagation();
+    setIndex((next + count) % count);
+  };
+
+  return (
+    <div className="img-ph carousel" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      <div className="carousel-track" style={{ transform: `translateX(-${index * 100}%)` }}>
+        {urls.map((u) => <img key={u} src={u} alt="" draggable={false} />)}
+      </div>
+      {count > 1 && (
+        <>
+          <button type="button" className="carousel-arrow left" aria-label="이전 사진" onClick={(e) => go(e, index - 1)}>‹</button>
+          <button type="button" className="carousel-arrow right" aria-label="다음 사진" onClick={(e) => go(e, index + 1)}>›</button>
+          <div className="carousel-dots">
+            {urls.map((u, i) => (
+              <button key={u} type="button" aria-label={`${i + 1}번째 사진`} className={i === index ? 'on' : ''} onClick={(e) => go(e, i)} />
+            ))}
+          </div>
+          <span className="carousel-count">{index + 1}/{count}</span>
+        </>
+      )}
+    </div>
+  );
+}
+
 /** 공구 카드 (02 홈, 07 내 공구함) */
 export function PostCardView({ post, footer }: { post: PostCard; footer?: ReactNode }) {
+  const now = useNow();
+  const images = post.imageUrls && post.imageUrls.length > 0 ? post.imageUrls : post.thumbnailUrl ? [post.thumbnailUrl] : [];
+  const recruiting = post.status === 'RECRUITING';
+  const soon = recruiting && isClosingSoon(post.deadlineAt, now);
   return (
     <div className="stack sm">
       <Link to={`/posts/${post.postId}`} className="post-card">
-        <ImageBox src={post.thumbnailUrl} />
+        <CardCarousel urls={images} seed={post.postId} />
         <div className="post-card-body">
           <div className="row small muted" style={{ gap: 8 }}>
             <StatusBadge status={post.status} />
@@ -46,6 +105,12 @@ export function PostCardView({ post, footer }: { post: PostCard; footer?: ReactN
           <Progress value={post.filledUnits} max={post.totalUnits} />
           <div className="small muted">
             {post.filledUnits} / {post.totalUnits}단위 · {post.participantCount}명 참여 · {CATEGORY_LABEL[post.category]}
+          </div>
+          <div className="row between small">
+            <span className={soon ? 'deadline soon' : 'deadline'}>
+              ⏰ {recruiting ? `마감까지 ${remaining(post.deadlineAt, now)}` : '모집 마감'}
+            </span>
+            <span className="muted tabular" title="조회수">👁 조회 {post.viewCount.toLocaleString('ko-KR')}</span>
           </div>
         </div>
       </Link>

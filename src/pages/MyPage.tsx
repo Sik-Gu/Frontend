@@ -15,6 +15,8 @@ const FILTERS: { value: MyPostFilter; label: string }[] = [
 ];
 
 const ACTION_LABEL: Record<ActionRequired, string> = {
+  PROPOSE_PLACE: '나눔 장소 제안하기 →',
+  AGREE_PLACE: '나눔 장소 확인하고 동의하기 →',
   ORDER: '영수증 등록하고 주문하기 →',
   SHIP: '배송 시작하기 →',
   DISTRIBUTE: '나눔 일시 정하기 →',

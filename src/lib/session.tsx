@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { ApiError, LOGOUT_EVENT, tokens } from '../api/client';
+import { ApiError, LOGOUT_EVENT, TOKEN_KEYS, tokens } from '../api/client';
 import { authApi, userApi } from '../api/endpoints';
 import type { MeResponse } from '../api/types';
 
@@ -72,8 +72,16 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     refresh().finally(() => setLoading(false));
     const onLogout = () => setMe(null);
+    // 다른 탭에서 로그인·로그아웃하면 이 탭의 내 정보도 맞춘다
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === null || TOKEN_KEYS.includes(e.key)) refresh();
+    };
     window.addEventListener(LOGOUT_EVENT, onLogout);
-    return () => window.removeEventListener(LOGOUT_EVENT, onLogout);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(LOGOUT_EVENT, onLogout);
+      window.removeEventListener('storage', onStorage);
+    };
   }, [refresh]);
 
   const login = useCallback(async (email: string, password: string) => {

@@ -85,12 +85,21 @@ export function ago(iso: string | null | undefined): string {
   return `${pad(d.getMonth() + 1)}.${pad(d.getDate())}`;
 }
 
-/** 남은 모집 기간: 6일 남음 / 3시간 남음 / 마감 */
-export function remaining(iso: string): string {
-  const diff = new Date(iso).getTime() - Date.now();
+/** 남은 모집 기간: 6일 남음 / 3시간 남음 / 12분 남음 / 모집 기간 종료 */
+export function remaining(iso: string, now = Date.now()): string {
+  const diff = new Date(iso).getTime() - now;
   if (diff <= 0) return '모집 기간 종료';
-  const h = Math.floor(diff / 3600000);
-  return h >= 24 ? `${Math.floor(h / 24)}일 남음` : `${h}시간 남음`;
+  const min = Math.floor(diff / 60000);
+  if (min < 1) return '1분 미만 남음';
+  if (min < 60) return `${min}분 남음`;
+  const h = Math.floor(min / 60);
+  return h >= 24 ? `${Math.floor(h / 24)}일 ${h % 24}시간 남음` : `${h}시간 ${min % 60}분 남음`;
+}
+
+/** 마감까지 하루가 안 남았으면 강조한다 */
+export function isClosingSoon(iso: string, now = Date.now()): boolean {
+  const diff = new Date(iso).getTime() - now;
+  return diff > 0 && diff < 24 * 3600 * 1000;
 }
 
 /** datetime-local 입력값(로컬 시각) → 백엔드 LocalDateTime 문자열 */

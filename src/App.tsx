@@ -10,6 +10,8 @@ import MyPage from './pages/MyPage';
 import PointPage from './pages/PointPage';
 import PostCreatePage from './pages/PostCreatePage';
 import PostDetailPage from './pages/PostDetailPage';
+import PostEditPage from './pages/PostEditPage';
+import ReportPage from './pages/ReportPage';
 import { SessionProvider, ToastProvider, useSession } from './lib/session';
 
 /** 로그인 + 동네 설정이 끝나야 들어갈 수 있는 화면 */
@@ -57,6 +59,8 @@ export default function App() {
             <Route path="/" element={<Protected><HomePage /></Protected>} />
             <Route path="/posts/new" element={<Protected><PostCreatePage /></Protected>} />
             <Route path="/posts/:postId" element={<Protected><PostDetailPage /></Protected>} />
+            <Route path="/posts/:postId/edit" element={<Protected><PostEditPage /></Protected>} />
+            <Route path="/report" element={<Protected><ReportPage /></Protected>} />
             <Route path="/chats" element={<Protected><ChatPage /></Protected>} />
             <Route path="/chats/:roomId" element={<Protected><ChatPage /></Protected>} />
             <Route path="/points" element={<Protected><PointPage /></Protected>} />

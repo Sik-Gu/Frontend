@@ -10,7 +10,7 @@ import { useSession, useToast } from '../lib/session';
 const SORTS: { value: PostSort; label: string }[] = [
   { value: 'LATEST', label: '최신순' },
   { value: 'DEADLINE', label: '마감임박' },
-  { value: 'POPULAR', label: '인기순' },
+  { value: 'POPULAR', label: '조회수순' },
   { value: 'PRICE', label: '가격순' },
 ];
 
@@ -29,7 +29,10 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [editingDong, setEditingDong] = useState(false);
 
-  useEffect(() => { setPage(0); }, [keyword, category, recruitingOnly, radius, sort]);
+  // 동네(좌표)가 바뀌면 그 동네 기준으로 첫 페이지부터 다시 불러온다
+  const lat = me?.location?.latitude;
+  const lng = me?.location?.longitude;
+  useEffect(() => { setPage(0); }, [keyword, category, recruitingOnly, radius, sort, lat, lng]);
 
   useEffect(() => {
     const search: PostSearch = { keyword: keyword || undefined, category, recruitingOnly, radius, sort, page };
@@ -40,7 +43,7 @@ export default function HomePage() {
       .catch((e) => { if (alive) { setData(null); toast.error(e); } })
       .finally(() => { if (alive) setLoading(false); });
     return () => { alive = false; };
-  }, [keyword, category, recruitingOnly, radius, sort, page, me?.location?.dongName, toast]);
+  }, [keyword, category, recruitingOnly, radius, sort, page, lat, lng, toast]);
 
   const dong = me?.location?.dongName ?? '우리 동네';
 

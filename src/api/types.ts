@@ -10,7 +10,7 @@ export type PostSort = 'LATEST' | 'DEADLINE' | 'POPULAR' | 'PRICE';
 export type LeaveReason = 'CHANGED_MIND' | 'PLACE_DISAGREEMENT';
 export type MyPostTab = 'ONGOING' | 'DONE';
 export type MyPostFilter = 'ALL' | 'HOST' | 'JOINED' | 'ACTION_REQUIRED';
-export type ActionRequired = 'ORDER' | 'SHIP' | 'DISTRIBUTE' | 'CONFIRM_RECEIPT' | 'WRITE_REVIEW' | 'PAY_DEBT';
+export type ActionRequired = 'PROPOSE_PLACE' | 'AGREE_PLACE' | 'ORDER' | 'SHIP' | 'DISTRIBUTE' | 'CONFIRM_RECEIPT' | 'WRITE_REVIEW' | 'PAY_DEBT';
 export type ChatRoomStatus = 'ONGOING' | 'CLOSED';
 export type MessageType = 'TEXT' | 'IMAGE' | 'SYSTEM';
 export type ImageType = 'POST' | 'RECEIPT' | 'INQUIRY' | 'REPORT' | 'CHAT';
@@ -47,15 +47,24 @@ export interface ProfileResponse {
   isBlocked: boolean;
 }
 
+export interface ReceivedReview {
+  reviewId: number; reviewerId: number; reviewerNickname: string; reviewerRole: ParticipationRole; postId: number;
+  postTitle: string; rating: number; tags: ReviewTag[]; content: string | null; createdAt: string;
+}
+
 // ---------- 공구 ----------
 export interface PostCard {
-  postId: number; title: string; thumbnailUrl: string | null; category: Category; unitPrice: number; baseUnit: string;
+  postId: number; title: string; thumbnailUrl: string | null; imageUrls: string[]; category: Category; unitPrice: number; baseUnit: string;
   totalUnits: number; filledUnits: number; participantCount: number; dongName: string; distance: DistanceRange | null;
   status: PostStatus; viewCount: number; deadlineAt: string; createdAt: string;
 }
 export interface PostCreateRequest {
   title: string; productName: string; productLink?: string; category: Category; content?: string;
   imageUrls: string[]; baseUnit: string; totalUnits: number; totalPrice: number; hostUnits: number;
+}
+/** PATCH /api/posts/{id}: 모집중이고 다른 참여자가 없을 때만. 가격·단위는 못 바꾼다 */
+export interface PostUpdateRequest {
+  title?: string; productName?: string; productLink?: string; category?: Category; content?: string; imageUrls?: string[];
 }
 export interface PostCreateResponse { postId: number; chatRoomId: number | null; unitPrice: number; paidPoint: number; balanceAfter: number; }
 export interface PostCancelResponse { postId: number; postStatus: PostStatus; refundedCount: number; refundedPoint: number; }
@@ -130,3 +139,21 @@ export interface ReviewTargetsResponse {
   settledAt: string | null; writableUntil: string | null; canWrite: boolean; targets: ReviewTarget[];
 }
 export interface ReviewItem { targetUserId: number; rating: number; tags: ReviewTag[]; content?: string; }
+
+// ---------- 신고 ----------
+export type ReportReason = 'CHAT_ABUSE' | 'TRADE_VIOLATION' | 'ETC';
+export type ViolationStage = 'RECRUITING' | 'PAYMENT' | 'ORDER' | 'RECEIPT' | 'SHIPPING' | 'DISTRIBUTION';
+export interface ReportCreateRequest {
+  targetUserId: number; reason: ReportReason;
+  detail?: { messageIds?: number[]; violationStage?: ViolationStage };
+  content?: string; imageUrls?: string[];
+}
+export interface ReportCreateResponse { reportId: number; status: 'PENDING' | 'DONE'; }
+
+// ---------- 알림 ----------
+export type NotificationType =
+  | 'JOINED' | 'UNITS_ADDED' | 'LEFT' | 'RECRUITED' | 'PLACE_PROPOSED' | 'PLACE_ALL_AGREED'
+  | 'ORDERED' | 'SHIPPED' | 'DISTRIBUTION_SCHEDULED' | 'SETTLED' | 'CANCELLED' | 'EXPIRED';
+export interface NotificationItem {
+  notificationId: number; type: NotificationType; message: string; postId: number | null; read: boolean; createdAt: string;
+}

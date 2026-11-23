@@ -2,7 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ApiError } from '../api/client';
 import { postApi } from '../api/endpoints';
-import type { OrderDetail, ParticipationStatusResponse, PaymentStatus, PostDetail, PostStatus, ReviewTag, ReviewTargetsResponse } from '../api/types';
+import type { OrderDetail, ParticipationRole, ParticipationStatusResponse, PaymentStatus, PostDetail, PostStatus, ReviewTag, ReviewTargetsResponse } from '../api/types';
+import ProfileModal from '../components/ProfileModal';
+import { canEditPost } from './PostEditPage';
 import { Avatar, ImageBox, ImageUploader, Modal, Progress, StatusBadge } from '../components/ui';
 import {
   CATEGORY_LABEL, DISTANCE_LABEL, fullDateTime, pt, RECEIPT_LABEL, remaining, STATUS_LABEL, STATUS_STEPS,
@@ -33,6 +35,7 @@ export default function PostDetailPage() {
   const [reviews, setReviews] = useState<ReviewTargetsResponse | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+  const [profileOf, setProfileOf] = useState<{ userId: number; role: ParticipationRole } | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -135,7 +138,7 @@ export default function PostDetailPage() {
               <span className="strong">{order?.distributeAt ? fullDateTime(order.distributeAt) : '채팅방에서 협의'}</span></div>
           </div>
 
-          <ParticipantsCard post={post} status={status} />
+          <ParticipantsCard post={post} status={status} onProfile={(userId, role) => setProfileOf({ userId, role })} />
 
           {order && (
             <div className="card stack">
@@ -161,21 +164,29 @@ export default function PostDetailPage() {
         <div className="stack" style={{ width: 460, flexShrink: 0 }}>
           <div className="card stack">
             <div className="row"><StatusBadge status={post.status} /><span className="small muted">{CATEGORY_LABEL[post.category]}</span></div>
-            <h1 style={{ fontSize: 24, margin: 0 }}>{post.title}</h1>
+            <div className="row between" style={{ alignItems: 'flex-start' }}>
+              <h1 style={{ fontSize: 24, margin: 0 }}>{post.title}</h1>
+              {canEditPost(post, me.userId) && (
+                <Link to={`/posts/${post.postId}/edit`} className="btn btn-secondary btn-sm" style={{ flexShrink: 0 }}>✏️ 수정</Link>
+              )}
+            </div>
             <div style={{ fontSize: 26, fontWeight: 700 }}>1단위 {won(post.unitPrice)}</div>
             <div className="small muted">기본 단위: {post.baseUnit} · 총 {post.totalUnits}단위 ({won(post.totalPrice)})</div>
             <hr className="divider" />
             <div className="row between small"><span className="muted">위치</span>
               <span>{post.dongName}{post.distance ? ` · ${DISTANCE_LABEL[post.distance]}` : ''}</span></div>
             <div className="row between small"><span className="muted">등록일</span><span>{fullDateTime(post.createdAt)}</span></div>
+            <div className="row between small"><span className="muted">조회수</span><span className="tabular">👁 {post.viewCount.toLocaleString('ko-KR')}</span></div>
             <div className="row between small"><span className="muted">모집 마감</span>
               <span>{fullDateTime(post.deadlineAt)} {post.status === 'RECRUITING' ? `(${remaining(post.deadlineAt)})` : ''}</span></div>
             <Progress value={post.filledUnits} max={post.totalUnits} />
             <div className="small strong">{post.filledUnits} / {post.totalUnits}단위 · {post.participantCount}명 참여 · {remainingUnits}단위 남음</div>
             <div className="row" style={{ background: '#f7f7f7', borderRadius: 8, padding: 12 }}>
-              <Avatar name={post.host.nickname} />
+              <button type="button" className="link-button" title="프로필 보기"
+                onClick={() => setProfileOf({ userId: post.host.userId, role: 'HOST' })}><Avatar name={post.host.nickname} /></button>
               <div className="grow">
-                <div className="strong">{post.host.nickname}{isHost ? ' (나)' : ''}</div>
+                <button type="button" className="link-button strong" title="프로필 보기"
+                  onClick={() => setProfileOf({ userId: post.host.userId, role: 'HOST' })}>{post.host.nickname}{isHost ? ' (나)' : ''}</button>
                 <div className="small muted">★ {post.host.rating ?? '-'} · 거래 {post.host.tradeCount}회
                   {post.host.mainCategories.length > 0 ? ` · 주로 ${post.host.mainCategories.map((c) => CATEGORY_LABEL[c]).join('·')}` : ''}</div>
               </div>
@@ -187,11 +198,18 @@ export default function PostDetailPage() {
             onCancelled={() => navigate('/me')} />
         </div>
       </div>
+
+      {profileOf && (
+        <ProfileModal userId={profileOf.userId} role={profileOf.role} onClose={() => setProfileOf(null)}
+          post={{ postId: post.postId, title: post.title, thumbnailUrl: post.imageUrls[0] ?? null, chatRoomId: post.chatRoomId }} />
+      )}
     </div>
   );
 }
 
-function ParticipantsCard({ post, status }: { post: PostDetail; status: ParticipationStatusResponse | null }) {
+function ParticipantsCard({ post, status, onProfile }: {
+  post: PostDetail; status: ParticipationStatusResponse | null; onProfile: (userId: number, role: ParticipationRole) => void;
+}) {
   if (status) {
     return (
       <div className="card stack">
@@ -203,10 +221,10 @@ function ParticipantsCard({ post, status }: { post: PostDetail; status: Particip
           const agreed = post.participants?.find((x) => x.userId === p.userId)?.placeAgreed;
           return (
             <div key={p.userId} className="row" style={{ padding: '6px 0', borderBottom: '1px solid #f0f0f0' }}>
-              <Avatar name={p.nickname} />
+              <button type="button" className="link-button" title="프로필 보기" onClick={() => onProfile(p.userId, p.role)}><Avatar name={p.nickname} /></button>
               <div className="grow">
                 <div className="row" style={{ gap: 6 }}>
-                  <span className="strong">{p.nickname}{p.isMe ? ' (나)' : ''}</span>
+                  <button type="button" className="link-button strong" title="프로필 보기" onClick={() => onProfile(p.userId, p.role)}>{p.nickname}{p.isMe ? ' (나)' : ''}</button>
                   {p.role === 'HOST' && <span className="badge muted">HOST</span>}
                 </div>
                 <div className="small muted">
@@ -227,9 +245,9 @@ function ParticipantsCard({ post, status }: { post: PostDetail; status: Particip
       <div className="section-title" style={{ margin: 0 }}>참여자 정보 <span className="small muted">{post.participantCount}명 · {post.filledUnits} / {post.totalUnits}단위</span></div>
       {(post.participants ?? []).map((p) => (
         <div key={p.userId} className="row" style={{ padding: '6px 0' }}>
-          <Avatar name={p.nickname} />
+          <button type="button" className="link-button" title="프로필 보기" onClick={() => onProfile(p.userId, p.role)}><Avatar name={p.nickname} /></button>
           <div className="grow">
-            <div className="row" style={{ gap: 6 }}><span className="strong">{p.nickname}</span>{p.role === 'HOST' && <span className="badge muted">HOST</span>}</div>
+            <div className="row" style={{ gap: 6 }}><button type="button" className="link-button strong" title="프로필 보기" onClick={() => onProfile(p.userId, p.role)}>{p.nickname}</button>{p.role === 'HOST' && <span className="badge muted">HOST</span>}</div>
             <div className="small muted">★ {p.rating ?? '신규'} · 거래 {p.tradeCount}회</div>
           </div>
           <span className="strong">{p.units}단위</span>
@@ -257,6 +275,7 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
 }) {
   const { me } = useSession();
   const [units, setUnits] = useState(1);
+  const [moreUnits, setMoreUnits] = useState(1);
   const [placeName, setPlaceName] = useState(post.distributionPlace?.name ?? '');
   const [receipts, setReceipts] = useState<string[]>([]);
   const [courier, setCourier] = useState('');
@@ -317,6 +336,35 @@ function ActionPanel({ post, isHost, isMember, status, act, onCancelled }: {
         <span className="badge outline">{RECEIPT_LABEL[post.me.receiptStatus]}</span>
       </div>,
     );
+    // 모집중이고 남은 단위가 있으면 내 몫을 늘릴 수 있다 (줄이기는 없음)
+    const left = post.totalUnits - post.filledUnits;
+    if (post.status === 'RECRUITING' && left > 0) {
+      const addCount = Math.min(moreUnits, left);
+      const addPrice = post.unitPrice * addCount;
+      blocks.push(
+        <div key="more" className="stack sm" style={{ border: '1px solid #e6e6e6', borderRadius: 10, padding: 14 }}>
+          <div className="row between">
+            <span className="strong">수량 추가</span>
+            <div className="row" style={{ gap: 0, border: '1px solid #ccc', borderRadius: 8, background: '#fff' }}>
+              <button className="btn btn-ghost" disabled={addCount <= 1} onClick={() => setMoreUnits(addCount - 1)}>−</button>
+              <span className="strong tabular" style={{ width: 32, textAlign: 'center' }}>{addCount}</span>
+              <button className="btn btn-ghost" disabled={addCount >= left} onClick={() => setMoreUnits(addCount + 1)}>+</button>
+            </div>
+          </div>
+          <div className="small muted">남은 {left}단위 안에서 늘릴 수 있어요 · 늘린 만큼 바로 결제(보류)돼요</div>
+          <button className="btn btn-secondary btn-block" onClick={async () => {
+            if (await act(() => postApi.addUnits(id, addCount), (r) => {
+              const j = r as { paidPoint: number; balanceAfter: number; postStatus: string };
+              return `${addCount}단위를 더 담았어요! ${pt(j.paidPoint)} 결제(보류) · 남은 포인트 ${pt(j.balanceAfter)}`
+                + (j.postStatus === 'RECRUITED' ? ' · 모집이 완료됐어요' : '');
+            })) setMoreUnits(1);
+          }}>+{addCount}단위 추가하기 · {pt(addPrice)}</button>
+          {balance < addPrice && (
+            <div className="notice danger small">사용 가능 포인트 {pt(balance)}로는 부족해요. <Link to="/points" style={{ textDecoration: 'underline' }}>충전하기</Link></div>
+          )}
+        </div>,
+      );
+    }
     if (post.chatRoomId) {
       blocks.push(<Link key="chat" to={`/chats/${post.chatRoomId}`} className="btn btn-secondary btn-block">💬 채팅방 가기</Link>);
     }
