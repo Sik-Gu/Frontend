@@ -52,11 +52,11 @@ export default function Header() {
               </label>
             </form>
             <Link to="/points" className="point-chip tabular" title="사용 가능 포인트">{pt(me.point.availableBalance)}</Link>
-            <Link to="/posts/new" className="btn btn-primary" style={{ height: 44, padding: '0 20px', fontSize: 16 }}>
+            <Link to="/posts/new" className="btn btn-primary header-new">
               <Icon name="plus" />공구 열기
             </Link>
             <NotificationBell />
-            <Link to="/me" title={me.nickname}><Avatar name={me.nickname} /></Link>
+            <Link to="/me" title={me.nickname} className="header-avatar"><Avatar name={me.nickname} /></Link>
           </div>
         )}
       </div>

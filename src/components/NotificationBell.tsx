@@ -70,7 +70,7 @@ export default function NotificationBell() {
   };
 
   return (
-    <div ref={box} style={{ position: 'relative' }}>
+    <div ref={box} className="header-bell" style={{ position: 'relative' }}>
       <button type="button" className="bell" aria-label={`알림 ${unread}개`} onClick={() => setOpen(!open)}>
         <Icon name="bell" size={22} />{unread > 0 && <span className="bell-count">{unread > 99 ? '99+' : unread}</span>}
       </button>

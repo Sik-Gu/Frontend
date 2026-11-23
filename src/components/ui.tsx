@@ -148,7 +148,7 @@ export function PostCardView({ post, footer }: { post: PostCard; footer?: ReactN
             <span>{post.filledUnits}/{post.totalUnits}단위 · {left > 0 ? `${left}단위 남음` : '다 찼어요'}</span>
             {recruiting && !footer && left > 0 && <span className="post-card-cta">참여하기</span>}
           </div>
-          <div className="row between small">
+          <div className="row between small post-card-meta">
             <span className={soon ? 'deadline soon' : 'deadline'}>
               {recruiting ? `마감까지 ${remaining(post.deadlineAt, now)}` : '모집 마감'}
             </span>

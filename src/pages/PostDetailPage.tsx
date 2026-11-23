@@ -84,8 +84,8 @@ export default function PostDetailPage() {
 
       {/* 진행 상태 */}
       <div className="card stack" style={{ padding: '20px 28px' }}>
-        <div className="row between">
-          <div className="row"><span className="strong">진행 상태</span><StatusBadge status={post.status} /></div>
+        <div className="row between wrap" style={{ gap: '6px 12px' }}>
+          <div className="row" style={{ flexShrink: 0 }}><span className="strong" style={{ whiteSpace: 'nowrap' }}>진행 상태</span><StatusBadge status={post.status} /></div>
           <span className="small muted">{STEP_GUIDE[post.status]}</span>
         </div>
         {post.status === 'CANCELLED' ? (
@@ -104,7 +104,7 @@ export default function PostDetailPage() {
         )}
       </div>
 
-      <div className="row split" style={{ alignItems: 'flex-start', gap: 28 }}>
+      <div className="row split detail-split" style={{ alignItems: 'flex-start', gap: 28 }}>
         {/* 왼쪽 */}
         <div className="grow stack lg">
           <div className="stack sm">
@@ -126,8 +126,9 @@ export default function PostDetailPage() {
             <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{post.content || '내용이 없어요.'}</p>
             {post.productLink && (
               <a className="notice row between" href={post.productLink} target="_blank" rel="noreferrer">
-                <span className="row" style={{ gap: 6, minWidth: 0 }}><Icon name="link" />{post.productLink.length > 50 ? `${post.productLink.slice(0, 50)}…` : post.productLink}</span>
-                <span className="strong row" style={{ gap: 4 }}>상품 링크 열기<Icon name="external" size={14} /></span>
+                <span className="row grow" style={{ gap: 6 }}><Icon name="link" />
+                  <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.productLink}</span></span>
+                <span className="strong row" style={{ gap: 4, flexShrink: 0, whiteSpace: 'nowrap' }}>상품 링크 열기<Icon name="external" size={14} /></span>
               </a>
             )}
             <hr className="divider" />

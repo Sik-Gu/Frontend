@@ -94,7 +94,7 @@ export default function HomePage() {
               )}
             </div>
           </div>
-          <div className="row wrap" style={{ gap: 10 }}>
+          <div className="row wrap home-filters" style={{ gap: 10 }}>
             <div className="segmented" role="group" aria-label="거리">
               {([500, 1000] as const).map((r) => (
                 <button key={r} className={radius === r ? 'on' : ''} aria-pressed={radius === r} onClick={() => setRadius(r)}>
@@ -113,7 +113,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="row wrap" role="group" aria-label="카테고리" style={{ gap: 8 }}>
+        <div className="row wrap home-cats" role="group" aria-label="카테고리" style={{ gap: 8 }}>
           {[undefined, ...CATEGORIES].map((c) => (
             <button key={c ?? 'ALL'} className={`chip${category === c ? ' active' : ''}`} aria-pressed={category === c}
               style={{ height: 40 }} onClick={() => setCategory(c)}>

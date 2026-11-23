@@ -137,7 +137,7 @@ function SignupCard() {
   return (
     <div className="card stack auth-card" style={{ maxWidth: 560, gap: 20 }}>
       <h1 style={{ fontSize: 26, margin: 0 }}>회원가입</h1>
-      <div className="row" style={{ gap: 10 }}>
+      <div className="row signup-steps" style={{ gap: 10 }}>
         {chip(1, '이메일 인증')}<span className="muted">—</span>{chip(2, '정보 입력')}<span className="muted">—</span>{chip(3, '동네 설정')}
       </div>
 
