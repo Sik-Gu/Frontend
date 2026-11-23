@@ -8,8 +8,8 @@ import { pt } from '../lib/format';
 import { useSession, useToast } from '../lib/session';
 
 const FILTERS: { value: MyPostFilter; label: string }[] = [
-  { value: 'ALL', label: '전체' },
-  { value: 'HOST', label: '내가 연 공구 (HOST)' },
+  { value: 'ALL', label: '전체 공구' },
+  { value: 'HOST', label: '내가 연 공구' },
   { value: 'JOINED', label: '참여한 공구' },
   { value: 'ACTION_REQUIRED', label: '내 액션 필요' },
 ];
@@ -48,39 +48,50 @@ export default function MyPage() {
   return (
     <div className="page">
       <div className="row split" style={{ alignItems: 'flex-start', gap: 24 }}>
-        <div className="card stack" style={{ width: 280, flexShrink: 0 }}>
-          <Avatar name={me.nickname} size="lg" />
-          <div>
-            <div style={{ fontSize: 20, fontWeight: 700 }}>{me.nickname}</div>
-            <div className="row small" style={{ gap: 6, marginTop: 6 }}>
-              <span className="badge muted">학교 인증</span>
-              <span className="muted">{me.universityName ?? '학교명 없음'}</span>
+        <aside className="card my-side" style={{ width: 280, flexShrink: 0 }}>
+          <div className="row" style={{ gap: 14 }}>
+            <Avatar name={me.nickname} size="md" />
+            <div className="grow">
+              <div className="my-name">{me.nickname}</div>
+              <div className="small muted my-ellipsis">
+                {me.universityName ?? '학교명 없음'}
+                <Icon name="check" size={12} label="학교 인증됨" />
+              </div>
             </div>
-            <div className="small muted" style={{ marginTop: 4 }}>{me.email}</div>
-            <div className="small muted">{me.location?.dongName ?? '동네 미설정'}</div>
-            <div className="small muted">평점 {me.rating ?? '-'} (후기 {me.reviewCount}) · 거래 {me.tradeCount}회</div>
           </div>
-          <hr className="divider" />
-          <div className="row between" style={{ textAlign: 'center' }}>
-            <div><div className="strong" style={{ fontSize: 18 }}>{me.postCounts.ongoing}</div><div className="small muted">진행중</div></div>
-            <div><div className="strong" style={{ fontSize: 18 }}>{me.postCounts.done}</div><div className="small muted">완료</div></div>
-            <div><div className="strong" style={{ fontSize: 18 }}>{pt(me.point.availableBalance)}</div><div className="small muted">포인트</div></div>
+          <div className="my-meta small">
+            <div className="my-ellipsis"><Icon name="pin" size={13} /> {me.location?.dongName ?? '동네 미설정'}</div>
+            <div><Icon name="star" size={13} /> {me.rating != null ? `${me.rating} · ` : ''}후기 {me.reviewCount} · 거래 {me.tradeCount}회</div>
           </div>
-          {me.point.heldAmount > 0 && <div className="small muted">공구에 보관 중(보류) {pt(me.point.heldAmount)}</div>}
-          <hr className="divider" />
-          <div className="stack sm">
-            <button className="btn btn-ghost row between" style={{ justifyContent: 'space-between' }} onClick={() => setFilter('ACTION_REQUIRED')}>
-              <span>할 일 {me.postCounts.actionRequired}건</span><Icon name="right" /></button>
-            <Link to="/points" className="btn btn-ghost" style={{ justifyContent: 'space-between' }}><span>포인트 내역</span><Icon name="right" /></Link>
-            <button className="btn btn-ghost" style={{ justifyContent: 'space-between' }} onClick={() => setEditingDong(true)}>
-              <span>동네 설정</span><Icon name="right" /></button>
-            <button className="btn btn-ghost" style={{ justifyContent: 'flex-start' }}
-              onClick={async () => { await logout(); toast.ok('로그아웃했어요'); navigate('/login'); }}>로그아웃</button>
+
+          <div className="my-stats">
+            <div><b className="tabular">{me.postCounts.ongoing}</b><span>진행중</span></div>
+            <div><b className="tabular">{me.postCounts.done}</b><span>완료</span></div>
+            <Link to="/points"><b className="tabular">{pt(me.point.availableBalance)}</b><span>포인트</span></Link>
           </div>
-        </div>
+          {me.point.heldAmount > 0 && <div className="small muted">공구에 보관 중 {pt(me.point.heldAmount)}</div>}
+
+          <nav className="my-nav">
+            <div className="my-nav-title">내 공구함</div>
+            {FILTERS.map((f) => (
+              <button key={f.value} type="button" className={`my-nav-item${filter === f.value ? ' active' : ''}`} onClick={() => setFilter(f.value)}>
+                <span>{f.label}</span>
+                {f.value === 'ACTION_REQUIRED' && me.postCounts.actionRequired > 0 && <span className="badge hot">{me.postCounts.actionRequired}</span>}
+              </button>
+            ))}
+          </nav>
+
+          <nav className="my-nav">
+            <div className="my-nav-title">설정</div>
+            <Link to="/points" className="my-nav-item"><span>포인트 내역</span><Icon name="right" size={14} /></Link>
+            <button type="button" className="my-nav-item" onClick={() => setEditingDong(true)}><span>동네 설정</span><Icon name="right" size={14} /></button>
+            <button type="button" className="my-nav-item muted"
+              onClick={async () => { await logout(); toast.ok('로그아웃했어요'); navigate('/login'); }}><span>로그아웃</span></button>
+          </nav>
+        </aside>
 
         <div className="grow stack">
-          <h1 style={{ fontSize: 22, margin: 0 }}>내 공구함</h1>
+          <h1 style={{ fontSize: 22, margin: 0 }}>{FILTERS.find((f) => f.value === filter)?.label}</h1>
           <div className="row" style={{ gap: 24, borderBottom: '1px solid var(--surface-muted)' }}>
             {(['ONGOING', 'DONE'] as const).map((t) => (
               <button key={t} className="btn btn-ghost" onClick={() => setTab(t)}
@@ -88,11 +99,6 @@ export default function MyPage() {
                   borderBottom: tab === t ? '2px solid var(--primary)' : '2px solid transparent' }}>
                 {t === 'ONGOING' ? `진행중 공구 ${me.postCounts.ongoing}` : `완료 공구 ${me.postCounts.done}`}
               </button>
-            ))}
-          </div>
-          <div className="row" style={{ gap: 8 }}>
-            {FILTERS.map((f) => (
-              <button key={f.value} className={`chip${filter === f.value ? ' active' : ''}`} onClick={() => setFilter(f.value)}>{f.label}</button>
             ))}
           </div>
 
